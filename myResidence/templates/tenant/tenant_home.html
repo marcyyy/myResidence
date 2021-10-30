@@ -1,0 +1,491 @@
+
+{% load static %}
+{% load humanize %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{% static '/logo/myResidence_tab.png'%}">
+    <title>Home</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static '/css/bootstrap.min.css'%}" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      #photos {
+          -webkit-filter: brightness(100%);
+      }
+
+      #photos:hover {
+          -webkit-filter: brightness(70%);
+          -webkit-transition: all 1s ease;
+          -moz-transition: all 1s ease;
+          -o-transition: all 1s ease;
+          -ms-transition: all 1s ease;
+          transition: all 1s ease;
+      }
+
+      .temp-image
+      {
+        background-image: url({{ announcement.main_news.image.url }});
+        background-repeat: no-repeat;
+        background-size: 100%;
+        background-position: center;
+        position: relative;
+      }
+
+      .temp-image::before {
+        content: "";
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        background-color: rgba(0,0,0,0.25);
+      }
+
+      .color-scheme-bg{
+          background-color: {{ request.user.accountcustomization.color_scheme }};
+      }
+
+      .color-scheme-text{
+          color: {{ request.user.accountcustomization.color_scheme }};
+      }
+
+      a{
+          text-decoration: none;
+      }
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    <link href="{% static '/custom/alert.css' %}" rel="stylesheet">
+    <script src="{% static '/custom/alert.js' %}"></script>
+    <link href="{% static '/custom/blog.css'%}" rel="stylesheet">
+    <link href="{% static '/custom/alert2.css' %}" rel="stylesheet">
+  </head>
+  <body>
+
+      {% for message in messages %}
+            {% if message.tags == 'success' %}
+        <div class='alert alert-success alert-dismissible'>
+        <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+            {{message}}
+        </div>
+            {% elif message.tags == 'error' %}
+        <div class='alert alert-danger alert-dismissible'>
+        <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+            {{message}}
+        </div>
+            {% elif message.tags == 'warning' %}
+        <div class='alert alert-warning alert-dismissible'>
+        <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+            {{message}}
+        </div>
+            {% endif %}
+        {% endfor %}
+
+      {% if notif and contract %}
+              <div style="position: absolute; top: 0; right: 0; z-index: 1; margin: 30px 30px; background-color: white; ">
+
+                  <div class="toast fade show" id="myToast" data-bs-autohide="false" >
+                        <div class="toast-header">
+                            <strong class="me-auto"><i class="bi-gift-fill"></i>Notification</strong>
+                            <small> {{ notiflast.date_time|naturaltime }} </small>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                            <form method="POST" enctype="multipart/form-data" >
+                            {% csrf_token %}
+                                <input type="hidden" id="form_type" name="form_type" value="con_notify">
+                                <input type="hidden" value="{{ request.user.tenant.id }}" name="id">
+                                {{ notifctr }} New Billings.
+                                <button type="submit" style="border: none;background: none;color:#0066ff">
+                                    Click here!
+                                </button>
+                            </form>
+                        </div>
+                  </div>
+
+                  <div class="toast fade show" id="myToast" data-bs-autohide="false" style="margin-top: 10px;">
+                        <div class="toast-header">
+                            <strong class="me-auto"><i class="bi-gift-fill"></i>Reminder</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        <div class="toast-body">
+                                Your contract agreement is still on hold.
+                                <button type="button" data-bs-toggle="modal" data-bs-target='#opencontract' data-bs-whatever="@mdo" style="border: none; background: none; color:#0066ff; margin-left:-6px" >
+                                    Review Contract.
+                                </button>
+                        </div>
+                  </div>
+              </div>
+
+              <div class="modal fade" id="opencontract" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                <div class="modal-content" >
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Contract Agreement</h5>
+                                  </div>
+                                  <div class="modal-body">
+                                       {% for each in contract %}
+                                            <form method="POST" enctype="multipart/form-data" class="needs-validation">
+                                                      {% csrf_token %}
+                                                      <div class="row g-3">
+
+                                                           <input type="hidden" name="form_type" value="con_contract">
+                                                           <input type="hidden" name="id" value="{{ request.user.tenant.id }}">
+
+                                                           <div class="col-4">
+                                                              <label for="tenant" class="form-label">Tenant ID</label>
+                                                              <input type="text" class="form-control" id="tenant" name="tenant" value="{{ request.user.tenant.id }}" readonly>
+                                                           </div>
+
+                                                           <div class="col-4">
+                                                              <label for="name" class="form-label">Name</label>
+                                                              <input type="text" class="form-control" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly>
+                                                           </div>
+
+                                                           <div class="col-4">
+                                                              <label for="name" class="form-label">Unit</label>
+                                                              <input type="text" class="form-control" value="{{ request.user.tenant.unit.floor }}{{ request.user.tenant.unit.room }}" readonly>
+                                                           </div>
+
+                                                           <div class="col-4">
+                                                              <label for="move_date" class="form-label">Move in Date</label>
+                                                              <input type="text" class="form-control" id="move_date" name="move_date" value="{{ each.move_date }}" readonly>
+                                                           </div>
+
+                                                           <div class="col-4">
+                                                              <label for="rent" class="form-label">Monthly Rent</label>
+                                                              <input type="text" step="0.01" min=0 class="form-control" id="rent" name="rent" value="{{ each.rent }}" readonly>
+                                                           </div>
+
+                                                           <div class="col-4">
+                                                              <label for="legal_rent" class="form-label">Legal Rent</label>
+                                                              <input type="text" step="0.01" min=0 class="form-control" id="legal_rent" name="legal_rent" value="{{ each.legal_rent }}" readonly>
+                                                           </div>
+
+                                                           <div class="col-6">
+                                                              <label for="grace_period" class="form-label">Grace Period</label>
+                                                              <input type="number" min=0 class="form-control" id="grace_period" name="grace_period"  value="{{ each.grace_period }}" readonly>
+                                                           </div>
+
+                                                           <div class="col-6">
+                                                              <label for="late_collection" class="form-label">Late Collection Fee (percentage)</label>
+                                                              <input type="text" class="form-control" id="late_collection" name="late_collection" value="{{ each.late_collection }}" readonly>
+                                                           </div>
+
+                                                           <div class="col-12">
+                                                              <label for="deposit" class="form-label">Deposit</label>
+                                                              <input type="text" step="0.01" min=0 class="form-control" id="deposit" name="deposit" value="{{ each.deposit }}" readonly>
+                                                           </div>
+
+                                                          <div class="col-12" style="padding-left:30px; padding-top: 20px">
+                                                              <div class="form-check">
+                                                                  <input class="form-check-input" type="radio" name="confirmation" value="Yes" id="flexCheckDefault">
+                                                                  <label class="form-check-label" for="flexCheckDefault">
+                                                                    I confirm my agreement to this contract
+                                                                  </label>
+                                                              </div>
+                                                              <div class="form-check">
+                                                                  <input class="form-check-input" type="radio" name="confirmation" value="No" id="flexCheckDefault">
+                                                                  <label class="form-check-label" for="flexCheckDefault">
+                                                                    I do not confirm my agreement to this contract
+                                                                  </label>
+                                                              </div>
+                                                          </div>
+
+                                                        <div class="modal-footer" style="margin-top:25px">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                                        </div>
+                                                  </div>
+
+                                              </form>
+                                       {% endfor %}
+                                  </div>
+                                </div>
+                              </div>
+                        </div>
+
+      {% endif %}
+
+      {% if notif and not contract %}
+          <div class="toast fade show" id="myToast" data-bs-autohide="false" style="background-color: white; position:absolute; right:0; top:0; z-index: 1; margin: 30px 30px">
+                <div class="toast-header">
+                    <strong class="me-auto"><i class="bi-gift-fill"></i>Notification</strong>
+                    <small> {{ notiflast.date_time|naturaltime }} </small>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    <form method="POST" enctype="multipart/form-data" >
+                    {% csrf_token %}
+                        <input type="hidden" id="form_type" name="form_type" value="con_notify">
+                        <input type="hidden" value="{{ request.user.tenant.id }}" name="id">
+                        {{ notifctr }} New Billings. <button type="submit"  name="submit" id="submit" style="border: none;background: none;color:#0066ff">Click here!</button>
+                    </form>
+                </div>
+          </div>
+      {% endif %}
+
+      {% if contract and not notif %}
+            <div class="toast fade show" id="myToast" data-bs-autohide="false" style="background-color: white; position:absolute; right:0; top:0; z-index: 1; margin: 30px 30px">
+                <div class="toast-header">
+                    <strong class="me-auto"><i class="bi-gift-fill"></i>Reminder</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                        Your contract agreement is still on hold.
+                        <button type="button" data-bs-toggle="modal" data-bs-target='#opencontract' data-bs-whatever="@mdo" style="border: none; background: none; color:#0066ff; margin-left:-6px" >
+                            Review Contract.
+                        </button>
+                </div>
+          </div>
+
+                  <div class="modal fade" id="opencontract" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                        <div class="modal-content" >
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Contract Agreement</h5>
+                          </div>
+                          <div class="modal-body">
+                               {% for each in contract %}
+                                    <form method="POST" enctype="multipart/form-data" class="needs-validation">
+                                              {% csrf_token %}
+                                              <div class="row g-3">
+
+                                                   <input type="hidden" name="form_type" value="con_contract">
+                                                   <input type="hidden" name="id" value="{{ request.user.tenant.id }}">
+
+                                                   <div class="col-4">
+                                                      <label for="tenant" class="form-label">Tenant ID</label>
+                                                      <input type="text" class="form-control" id="tenant" name="tenant" value="{{ request.user.tenant.id }}" readonly>
+                                                   </div>
+
+                                                   <div class="col-4">
+                                                      <label for="name" class="form-label">Name</label>
+                                                      <input type="text" class="form-control" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly>
+                                                   </div>
+
+                                                   <div class="col-4">
+                                                      <label for="name" class="form-label">Unit</label>
+                                                      <input type="text" class="form-control" value="{{ request.user.tenant.unit.floor }}{{ request.user.tenant.unit.room }}" readonly>
+                                                   </div>
+
+                                                   <div class="col-4">
+                                                      <label for="move_date" class="form-label">Move in Date</label>
+                                                      <input type="text" class="form-control" id="move_date" name="move_date" value="{{ each.move_date }}" readonly>
+                                                   </div>
+
+                                                   <div class="col-4">
+                                                      <label for="rent" class="form-label">Monthly Rent</label>
+                                                      <input type="text" step="0.01" min=0 class="form-control" id="rent" name="rent" value="{{ each.rent }}" readonly>
+                                                   </div>
+
+                                                   <div class="col-4">
+                                                      <label for="legal_rent" class="form-label">Legal Rent</label>
+                                                      <input type="text" step="0.01" min=0 class="form-control" id="legal_rent" name="legal_rent" value="{{ each.legal_rent }}" readonly>
+                                                   </div>
+
+                                                   <div class="col-6">
+                                                      <label for="grace_period" class="form-label">Grace Period</label>
+                                                      <input type="number" min=0 class="form-control" id="grace_period" name="grace_period"  value="{{ each.grace_period }}" readonly>
+                                                   </div>
+
+                                                   <div class="col-6">
+                                                      <label for="late_collection" class="form-label">Late Collection Fee (percentage)</label>
+                                                      <input type="text" class="form-control" id="late_collection" name="late_collection" value="{{ each.late_collection }}" readonly>
+                                                   </div>
+
+                                                   <div class="col-12">
+                                                      <label for="deposit" class="form-label">Deposit</label>
+                                                      <input type="text" step="0.01" min=0 class="form-control" id="deposit" name="deposit" value="{{ each.deposit }}" readonly>
+                                                   </div>
+
+                                                  <div class="col-12" style="padding-left:30px; padding-top: 20px">
+                                                      <div class="form-check">
+                                                          <input class="form-check-input" type="radio" name="confirmation" value="Yes" id="flexCheckDefault">
+                                                          <label class="form-check-label" for="flexCheckDefault">
+                                                            I confirm my agreement to this contract
+                                                          </label>
+                                                      </div>
+                                                      <div class="form-check">
+                                                          <input class="form-check-input" type="radio" name="confirmation" value="No" id="flexCheckDefault">
+                                                          <label class="form-check-label" for="flexCheckDefault">
+                                                            I do not confirm my agreement to this contract
+                                                          </label>
+                                                      </div>
+                                                  </div>
+
+                                                <div class="modal-footer" style="margin-top:25px">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                                </div>
+                                          </div>
+
+                                      </form>
+                               {% endfor %}
+                          </div>
+                        </div>
+                      </div>
+                </div>
+      {% endif %}
+
+<header class="p-3 text-white color-scheme-bg">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+          <img src="{% static '/logo/myResidence_icon.png'%}" height="30px" style="margin-left: -125px">
+          <img src="{% static '/logo/myResidence.png'%}" height="30px" style="margin-left: -5px">
+        </ul>
+
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0" style="padding-bottom: 10px">
+            <li class="nav-item">
+                <a href="#" class="py-3 border-bottom" aria-current="page" title="Home" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/home_w.png'%}" height="30px" >
+                </a>
+            </li>
+            <li style="margin-left: 40px">
+                <a href="{% url 'billings' %}" class="py-3" title="Billings" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/billings.png'%}" height="30px" >
+                </a>
+            </li>
+            <li style="margin-left: 40px">
+                <a href="{% url 'report_add' %}" class="py-3" title="Complaints" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/complaints.png'%}" height="30px" >
+                </a>
+            </li>
+            <li style="margin-left: 40px">
+                <a href="{% url 'visitor' %}" class="py-3" title="Visitor Requests" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/vs.png'%}" height="30px" >
+                </a>
+            </li>
+        </ul>
+
+        <div class="text-end" style="display:flex">
+          <!--div>
+            <input type="image" src="../assets/icons/bell.png" height="25px" style="margin-right: 20px;margin-top:4px"/>
+          </div-->
+          <div class="dropdown">
+            <a href="#" class="d-flex align-items-center link-light text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="{{ request.user.tenant.image.url }}" alt="" width="32" height="32" class="rounded-circle me-2">
+                <strong style="color: white">{{request.user.first_name}} {{request.user.last_name}}</strong>
+            </a>
+            <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+              <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'settings' %}">Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'logout' %}">Sign out</a></li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+<main class="container" style="margin-top: 20px">
+  <div class="p-4 p-md-5 mb-4 text-white rounded temp-image">
+    <div class="col-md-6 px-0" >
+      <h1 class="display-4 fst-italic" style="position: relative; text-shadow: 0 0 2px #212121;">{{ announcement.main_news.headline }}</h1>
+      <p class="lead my-3" style="position: relative; text-shadow: 0 0 2px #212121; text-align: justify;">{{ announcement.main_news.content }}</p>
+      <!--p class="lead mb-0"><a href="#" class="text-white fw-bold">Continue reading...</a></p-->
+    </div>
+  </div>
+
+    <!--div class="col-md-6">
+      <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-primary">World</strong>
+          <h3 class="mb-0">Featured post</h3>
+          <div class="mb-1 text-muted">Nov 12</div>
+          <p class="card-text mb-auto">This is a wider card with supporting text below as a natural lead-in to additional content.</p>
+          <a href="#" class="stretched-link">Continue reading</a>
+        </div>
+        <div class="col-auto d-none d-lg-block">
+          <svg class="bd-placeholder-img" width="200" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+
+        </div>
+      </div>
+    </div-->
+
+  <div class="row g-5">
+
+    <div class="col-md-8">
+      <h3 class="pb-4 mb-4 fst-italic border-bottom color-scheme-text">
+        myResidence Announcements
+      </h3>
+        <article class="blog-post">
+            {% for an in news %}
+                  <h2 class="blog-post-title" >{{ an.headline }}</h2>
+                  <p class="blog-post-meta">{{ an.datepublished }}</p>
+
+                  <p style="text-align: justify; text-justify: inter-word;">{{ an.content }}</p>
+
+                  <h3 class="pb-4 mb-4 fst-italic border-bottom"></h3>
+            {% endfor %}
+        </article>
+    </div>
+
+    <div class="col-md-4">
+      <div class="position-sticky" style="top: 2rem;">
+        <div class="p-4 mb-3 bg-light rounded">
+          <h4 class="fst-italic">Survey</h4>
+          <p class="mb-0">We need your help in improving our Tenant Portal System! Please fill out this <a href="{{ announcement.survey_link }}">Customer Satisfaction Survey</a>. <br><br>Your time and feedback is greatly appreciated.</p>
+
+        </div>
+                  {% if announcement.image == Null %}
+                      <div class="card-body">
+                            <img src="{% static '/uploaded/news/default.jpg' %}" alt="" style="width: 100%;">
+                      </div>
+                  {% else %}
+                      <div class="card-body">
+                        <img src="{{ announcement.image.url }}" alt="advertisement"
+                             onerror="this.onerror=null; this.src='{% static '/uploaded/news/default.jpg' %}'" style="width: 100%;" >
+                      </div>
+                  {% endif %}
+
+        <div class="p-4">
+          <h4 class="fst-italic">Socials</h4>
+          <ol class="list-unstyled">
+            <li><a href="https://www.facebook.com">Facebook</a></li>
+            <li><a href="https://www.instagram.com">Instagram</a></li>
+            <li><a href="#">Website</a></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+    <script>
+        $(document).ready(function() {
+            $(".toast").toast('show');
+        });
+    </script>
+
+    <script src="{% static '/js/bootstrap.bundle.min.js'%}"></script>
+    <script src="{% static '/js/utils.js'%}"></script>
+    <script src="{% static '/custom/sidebars.js'%}"></script>
+  </body>
+</html>

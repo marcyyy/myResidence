@@ -1,0 +1,371 @@
+
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{% static '/logo/myResidence_tab.png'%}">
+    <title>Settings</title>
+
+    <link href="{% static '/css/bootstrap.min.css'%}" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      body{
+        background-color: #fafafa;
+      }
+
+      .color-scheme-bg{
+          background-color: {{ request.user.accountcustomization.color_scheme }};
+      }
+
+      .color-scheme-text{
+          color: {{ request.user.accountcustomization.color_scheme }};
+      }
+
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    <link href="{% static '/custom/alert.css' %}" rel="stylesheet">
+    <script src="{% static '/custom/alert.js' %}"></script>
+    <link href="{% static '/custom/sidebars.css'%}" rel="stylesheet">
+    <link href="{% static '/custom/offcanvas.css'%}" rel="stylesheet">
+    <link href="{% static '/custom/alert2.css' %}" rel="stylesheet">
+  </head>
+  <body>
+
+  {% for message in messages %}
+        {% if message.tags == 'success' %}
+    <div class='alert alert-success alert-dismissible'>
+    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+        {{message}}
+    </div>
+        {% elif message.tags == 'error' %}
+    <div class='alert alert-danger alert-dismissible'>
+    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+        {{message}}
+    </div>
+        {% elif message.tags == 'warning' %}
+    <div class='alert alert-warning alert-dismissible'>
+    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+        {{message}}
+    </div>
+        {% endif %}
+    {% endfor %}
+
+<header class="p-3 text-white color-scheme-bg">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+          <img src="{% static '/logo/myResidence_icon.png'%}" height="30px" style="margin-left: -125px">
+          <img src="{% static '/logo/myResidence.png'%}" height="30px" style="margin-left: -5px">
+        </ul>
+
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0" style="padding-bottom: 10px">
+            <li class="nav-item">
+                <a href="{% url 'home' %}" class="py-3" title="Home" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/home.png'%}" height="30px" >
+                </a>
+            </li>
+            <li style="margin-left: 40px">
+                <a href="{% url 'billings' %}" class="py-3" title="Billings" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/billings.png'%}" height="30px" >
+                </a>
+            </li>
+            <li style="margin-left: 40px">
+                <a href="{% url 'report_add' %}" class="py-3" title="Complaints" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/complaints.png'%}" height="30px" >
+                </a>
+            </li>
+            <li style="margin-left: 40px">
+                <a href="{% url 'visitor' %}" class="py-3" title="Visitor Requests" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/vs.png'%}" height="30px" >
+                </a>
+            </li>
+        </ul>
+
+        <div class="text-end" style="display:flex">
+          <!--div>
+            <input type="image" src="../assets/icons/bell.png" height="25px" style="margin-right: 20px;margin-top:4px"/>
+          </div-->
+            <div class="dropdown">
+            <a href="#" class="d-flex align-items-center link-light text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="{{ request.user.tenant.image.url }}" alt="" width="32" height="32" class="rounded-circle me-2">
+                <strong style="color: white">{{request.user.first_name}} {{request.user.last_name}}</strong>
+            </a>
+            <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+              <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+              <li><a class="dropdown-item" href="#">Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'logout' %}">Sign out</a></li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+<main class="container" style="padding:15px">
+
+  <div class="flex-shrink-0" style="width: 220px;">
+    <ul class="list-unstyled ps-0">
+      <li class="mb-1" style="align-items: center; justify-content: center; display: flex">
+        <img src="{{ request.user.tenant.image.url }}" alt="" width="180" height="180" class="rounded-circle me-2" id="output">
+      </li>
+      <li class="mb-1">
+        
+      </li>
+    </ul>
+
+      <div class="my-3 p-3 bg-body rounded shadow-sm">
+          <div class="border-bottom p-1">
+            <p class="pb-2 color-scheme-text" style="margin-bottom: -10px;font-weight: bold; font-size:18px" id="customize">Customize</p>
+            <p class="text-muted" style="margin-bottom: 5px;font-size:15px;">Color</p>
+          </div>
+
+          <form method="POST" enctype="multipart/form-data" style="margin-top: 10px" id="customform">
+              {% csrf_token %}
+              <input type="color" class="bd-placeholder-img flex-shrink-0 me-2 rounded" style="width:100%; height:70px;
+                     background-color: transparent; border: none" id="color_scheme"
+                     name="color_scheme" value="{{ request.user.accountcustomization.color_scheme }}">
+
+              <input type="hidden" name="form_type" value="customform">
+              <input type="text" class="form-control" id="account" name="account" value="{{ request.user.id }}" hidden>
+              <input type="text" class="form-control" id="isactive" name="isactive" value="True" hidden>
+
+              <div class="p-1" style="align-items: right; justify-content: right;display: flex; margin-top:10px">
+                  <button type="submit" class="btn btn-sm btn-outline-secondary">Update</button>
+              </div>
+          </form>
+
+    </div>
+
+
+  </div>
+
+  <div class="b-example-divider" style="width: 0"></div>
+
+  <div class="container-fluid" style="padding-left:30px;margin-top: -15px">
+
+    <div class="row g-5">
+      <div class="col-md-7 col-lg-12">
+        
+        <div class="border-bottom">  
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">  
+            <h3 style="margin-top: 20px;margin-bottom: 15px">Profile</h3>
+          </div>
+
+          <p class="text-muted" style="margin-top:-15px">Update Tenant Information</p>
+        </div>
+
+        <div class="my-3 p-3 bg-body rounded shadow-sm " > 
+
+            <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate id="tenantform">
+           {% csrf_token %}
+
+                <input type="hidden" name="form_type" value="tenantform">
+
+            <div class="row g-4">
+
+              <div class="col-12" >
+                <label for="image" class="form-label">Profile Picture</label>
+                  <div class="input-group">
+                    <input type="file" class="form-control" name="image" id="input-file" onchange="loadFile(event)" accept="image/jpeg, image/png, image/gif">
+                  </div>
+              </div>
+
+              <div class="col-12">
+                <label for="dateofbirth" class="form-label">Date of Birth</label>
+                <input type="date" class="form-control" name="dateofbirth" value="{{ dob }}" required >
+              </div>
+
+              <div class="col-6">
+                <label for="unit" class="form-label">Room Unit</label>
+                  <div class="input-group has-validation">
+                    <span class="input-group-text">#</span>
+                    <input type="text" class="form-control" value="{{ request.user.tenant.unit.floor}}{{ request.user.tenant.unit.room }}" readonly>
+                    <input type="hidden" name="unit" value="{{ request.user.tenant.unit.id}}">
+                  </div>
+              </div>
+
+              <div class="col-6" >
+                <label for="contact" class="form-label">Contact Number</label>
+                <input type="text" class="form-control" name="contact" value="{{ request.user.tenant.contact }}">
+              </div>
+
+              <div class="col-12">
+                <label for="work_address" id="work_address" class="form-label">Work Address <span class="text-muted">(School address for students)</span></label>
+                <input type="text" class="form-control" name="work_address" value="{{ request.user.tenant.work_address }}">
+                <div class="invalid-feedback">
+                  Please provide a Category.
+                </div>
+              </div>
+
+            </div>
+          <hr style="margin: 25px 0px 20px 0px">
+
+            <small class="d-block text-end mt-3">
+              <div style="display: flex; justify-content:right; align-items: right">
+                <button class=" btn btn-primary" type="submit" style="width: 150px;">Update</button>
+              </div>
+            </small>
+        </form>
+
+        </div>
+
+        <!-- account -->
+
+        <div class="border-bottom">  
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">  
+            <h3 style="margin-top: 20px;margin-bottom: 15px">Account</h3>
+          </div>
+
+          <p class="text-muted" style="margin-top:-15px">Update Login Information</p>
+        </div>
+
+        <div class="my-3 p-3 bg-body rounded shadow-sm " >
+
+            <form class="needs-validation" method="POST" novalidate id="accountform">
+           {% csrf_token %}
+
+            <div class="row g-4">
+
+              <input type="hidden" name="form_type" value="accountform">
+
+              <div class="col-6">
+                <label for="first_name" id="first_name" class="form-label">First Name</label>
+                <input type="text" class="form-control" name="first_name" value="{{ request.user.first_name }}">
+              </div>
+
+              <div class="col-6" >
+                <label for="last_name" id="last_name" class="form-label">Last Name</label>
+                <input type="text" class="form-control" name="last_name" value="{{ request.user.last_name }}">
+              </div>
+
+              <div class="col-12" >
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" value="{{ request.user.email }}">
+              </div>
+
+              <div class="col-12">
+                <label for="username" class="form-label">Username</label>
+                  <div class="input-group has-validation">
+                    <span class="input-group-text">@</span>
+                    <input type="text" class="form-control" id="username" name="username" value="{{ request.user.username }}" required>
+                  </div>
+              </div>
+
+              <!-- class="col-6" >
+                <label for="" id="" class="form-label">New Password</label>
+                <input type="password" class="form-control" id="" name="password1">
+              </div>
+
+              <div class="col-6" >
+                <label for="" id="" class="form-label" >Confirm Password</label>
+                <input type="password" class="form-control" id="" name="password2">
+                <div class="invalid-feedback">
+                  Please provide a Category.
+                </div>
+              </div-->
+
+          </div>
+                <hr style="margin: 25px 0px 20px 0px">
+
+            <small class="d-block text-end mt-3">
+              <div style="display: flex; justify-content:right; align-items: right">
+                <button class=" btn btn-primary" type="submit" style="width: 150px;">Update</button>
+              </div>
+            </small>
+
+            </form>
+        </div>
+
+
+          <!-- account -->
+
+        <div class="border-bottom">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+            <h3 style="margin-top: 20px;margin-bottom: 15px">Password</h3>
+          </div>
+
+          <p class="text-muted" style="margin-top:-15px">Change Password</p>
+        </div>
+
+        <div class="my-3 p-3 bg-body rounded shadow-sm " >
+
+            <form class="needs-validation" method="POST" novalidate id="passwordform">
+           {% csrf_token %}
+
+            <div class="row g-4">
+
+              <input type="hidden" name="form_type" value="passwordform">
+
+              <div class="col-12">
+                <label for="old_password" id="old_password" class="form-label">Old Password</label>
+                <input type="password" class="form-control" name="old_password" required>
+              </div>
+
+              <div class="col-6" >
+                <label for="new_password1" id="new_password1" class="form-label">New Password</label>
+                <input type="password" class="form-control" name="new_password1" required>
+              </div>
+
+              <div class="col-6" >
+                <label for="new_password2" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" name="new_password2" required>
+              </div>
+
+                <span class="helptext">
+                    <ul>
+                        <li>Your password can’t be too similar to your other personal information.</li>
+                        <li>Your password must contain at least 8 characters.</li>
+                        <li>Your password can’t be a commonly used password.</li>
+                        <li>Your password can’t be entirely numeric.</li>
+                    </ul>
+                </span>
+
+
+          </div>
+                <hr style="margin: 25px 0px 20px 0px">
+
+            <small class="d-block text-end mt-3">
+              <div style="display: flex; justify-content:right; align-items: right">
+                <button class=" btn btn-primary" type="submit" style="width: 150px;">Update</button>
+              </div>
+            </small>
+
+            </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+    <script language="javascript">
+         var loadFile = function(event) {
+            var image = document.getElementById('output');
+            image.src = URL.createObjectURL(event.target.files[0]);
+        };
+    </script>
+
+    <script src="{% static '/js/bootstrap.bundle.min.js'%}"></script>
+
+      <script src="{% static '/custom/sidebars.js'%} "></script>
+      <script src="{% static '/custom/form-validation.js'%} "></script>
+  </body>
+</html>

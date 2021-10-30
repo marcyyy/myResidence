@@ -1,0 +1,407 @@
+
+{% load static %}
+{% load humanize %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{% static '/logo/myResidence_tab.png'%}">
+    <title>Profile</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static '/css/bootstrap.min.css'%}" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      body{
+        background-color: #fafafa;
+      }
+
+      .color-scheme-bg{
+          background-color: {{ request.user.accountcustomization.color_scheme }};
+      }
+
+      .color-scheme-text{
+          color: {{ request.user.accountcustomization.color_scheme }};
+      }
+
+    </style>
+
+    
+    <!-- Custom styles for this template -->
+    <link href="{% static '/custom/alert.css' %}" rel="stylesheet">
+    <script src="{% static '/custom/alert.js' %}"></script>
+    <link href="{% static '/custom/sidebars.css'%}" rel="stylesheet">
+    <link href="{% static '/custom/offcanvas.css'%}" rel="stylesheet">
+    <link href="{% static '/custom/alert2.css' %}" rel="stylesheet">
+  </head>
+  <body>
+
+  {% for message in messages %}
+        {% if message.tags == 'success' %}
+    <div class='alert alert-success alert-dismissible'>
+    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+        {{message}}
+    </div>
+        {% elif message.tags == 'error' %}
+    <div class='alert alert-danger alert-dismissible'>
+    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+        {{message}}
+    </div>
+        {% elif message.tags == 'warning' %}
+    <div class='alert alert-warning alert-dismissible'>
+    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+        {{message}}
+    </div>
+        {% endif %}
+    {% endfor %}
+
+<header class="p-3 text-white color-scheme-bg">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+          <img src="{% static '/logo/myResidence_icon.png'%}" height="30px" style="margin-left: -125px">
+          <img src="{% static '/logo/myResidence.png'%}" height="30px" style="margin-left: -5px">
+        </ul>
+
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0" style="padding-bottom: 10px">
+            <li class="nav-item">
+                <a href="{% url 'home' %}" class="py-3" title="Home" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/home.png'%}" height="30px" >
+                </a>
+            </li>
+            <li style="margin-left: 40px">
+                <a href="{% url 'billings' %}" class="py-3" title="Billings" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/billings.png'%}" height="30px" >
+                </a>
+            </li>
+            <li style="margin-left: 40px">
+                <a href="{% url 'report_add' %}" class="py-3" title="Complaints" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/complaints.png'%}" height="30px" >
+                </a>
+            </li>
+            <li style="margin-left: 40px">
+                <a href="{% url 'visitor' %}" class="py-3" title="Visitor Requests" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/vs.png'%}" height="30px" >
+                </a>
+            </li>
+        </ul>
+
+        <div class="text-end" style="display:flex">
+          <!--div>
+            <input type="image" src="../assets/icons/bell.png" height="25px" style="margin-right: 20px;margin-top:4px"/>
+          </div-->
+
+            <div class="dropdown">
+            <a href="#" class="d-flex align-items-center link-light text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="{{ request.user.tenant.image.url }}" alt="" width="32" height="32" class="rounded-circle me-2">
+                <strong style="color: white">{{request.user.first_name}} {{request.user.last_name}}</strong>
+            </a>
+            <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+              <li><a class="dropdown-item" href="#">Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'settings' %}">Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'logout' %}">Sign out</a></li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+<main class="container" style="padding:15px">
+
+  <div class="flex-shrink-0" style="width: 220px;">
+    <ul class="list-unstyled ps-0">
+      <li class="mb-1" style="align-items: center; justify-content: center; display: flex">
+        <img src="{{ request.user.tenant.image.url }}" alt="" width="180" height="180" class="rounded-circle me-2">
+      </li>
+      <li class="mb-1">
+        
+      </li>
+    </ul>
+
+    <div class="my-3 p-3 bg-body rounded shadow-sm">
+          <div class="border-bottom p-1">
+            <p class="pb-2 color-scheme-text" style="margin-bottom: -10px;font-weight: bold; font-size:18px">{{ request.user.first_name }} {{ request.user.last_name }}</p>
+            <p class="text-muted" style="font-size:15px;">@{{ request.user.username }}</p>
+          </div>
+
+          <ul class="list-unstyled p-1 border-bottom" style="margin-top:10px; align-items: left; justify-content: left">
+                <li style="display: flex">
+                  <img class="bd-placeholder-img flex-shrink-0 me-2 rounded" src="{% static '/icons/birthday.png'%}" height="20px">
+                  <p class="" style="font-size:15px">{{ request.user.tenant.dateofbirth }}</p>
+                </li>
+                <li style="display: flex; margin-top: -5px">
+                  <img class="bd-placeholder-img flex-shrink-0 me-2 rounded" src="{% static '/icons/unit.png'%}" height="20px">
+                  <p class="" style="font-size:15px">{{ request.user.tenant.unit.floor }}{{ request.user.tenant.unit.room }}</p>
+                </li>
+                <li style="display: flex; margin-top: -5px">
+                  <img class="bd-placeholder-img flex-shrink-0 me-2 rounded" src="{% static '/icons/phone.png'%}" height="20px">
+                  <p class="" style="font-size:15px">{{ request.user.tenant.contact }}</p>
+                </li>
+                <li style="display: flex; margin-top: -5px">
+                  <img class="bd-placeholder-img flex-shrink-0 me-2 rounded" src="{% static '/icons/email.png'%}" height="20px">
+                  <p class="" style="font-size:15px">{{ request.user.email }}</p>
+                </li>
+                <li style="display: flex; margin-top: -5px">
+                  <img class="bd-placeholder-img flex-shrink-0 me-2 rounded" src="{% static '/icons/work.png'%}" height="20px">
+                  <p class="" style="font-size:15px">{{ request.user.tenant.work_address }}</p>
+                </li>
+            </ul>
+
+        <div class="p-1" style="align-items: right; justify-content: right;display: flex">
+            <a href="{% url 'settings' %}" style="text-decoration: none">
+                    <button type="button" class="btn btn-sm btn-outline-secondary">Settings</button>
+            </a>
+        </div>
+    </div>
+
+    <div class="my-3 p-3 bg-body rounded shadow-sm">
+          <div class="border-bottom p-1">
+            <p class="pb-2 color-scheme-text" style="margin-bottom: -10px;font-weight: bold; font-size:18px" id="customize">Room {{ request.user.tenant.unit }}</p>
+            <p class="text-muted" style="margin-bottom: 5px;font-size:15px;">List of Occupants</p>
+          </div>
+
+           <ul class="list-unstyled p-1 border-bottom" style="margin-top:10px; align-items: left; justify-content: left">
+                {% for t in roomies %}
+                    <li style="display: flex">
+                      <img class="bd-placeholder-img flex-shrink-0 me-2 rounded" src="{{ t.image.url }}" height="20px">
+                      <p class="" style="font-size:15px">{{ t.account.first_name }} {{ t.account.last_name }}</p>
+                    </li>
+               {% endfor %}
+            </ul>
+
+    </div>
+
+  </div>
+
+  <div class="b-example-divider" style="width: 0px"></div>
+
+  <div class="container-fluid" style="padding-left:30px;margin-top: -15px">
+
+    <div class="row g-5">
+      <div class="col-md-7 col-lg-12">
+        
+        <div class="border-bottom">  
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">  
+            <h4 style="margin-top: 20px;margin-bottom: 15px">Hello, {{ request.user.first_name }}!</h4>
+          </div>
+
+          <p class="text-muted" style="margin-top:-15px">Welcome to your Tenant Profile.</p>
+
+        </div>
+
+        
+
+        <!--div class="my-3 p-3 bg-body rounded shadow-sm " >
+
+            <h6 class="border-bottom pb-2 mb-0 color-scheme-text" id="notifs-header">Notifications</h6>
+            
+            <div class="d-flex text-muted pt-3 border-bottom">
+              <img class="bd-placeholder-img flex-shrink-0 me-2 rounded" src="{% static '/icons/proof_payment_l.png'%}" height="32px"> 
+
+              <p class="pb-3 mb-0 small lh-sm">
+                <strong class="d-block text-gray-dark">Proof of Payment #20</strong>
+                Approved
+              </p>
+            </div>
+              
+            <div class="d-flex text-muted pt-3 border-bottom">
+              <img class="bd-placeholder-img flex-shrink-0 me-2 rounded" src="{% static '/icons/announcement.png'%}" height="32px">
+
+              <p class="pb-3 mb-0 small lh-sm">
+                <strong class="d-block text-gray-dark">New Announcement</strong>
+                Vaccination Hub now open!
+              </p>
+            </div>
+
+            <div class="d-flex text-muted pt-3 border-bottom">
+              <img class="bd-placeholder-img flex-shrink-0 me-2 rounded" src="{% static '/icons/repair.png'%}" height="32px">
+
+              <p class="pb-3 mb-0 small lh-sm ">
+                <strong class="d-block text-gray-dark">Repair Ticket #08</strong>
+                Scheduled
+              </p>
+            </div>
+          
+            <small class="d-block text-end mt-3">
+              <a href="#" style="text-decoration: none; margin-right: 15px">View All</a>
+            </small>
+        </div-->
+
+      <!-- default view -->
+        <div class="my-3 p-3 bg-body rounded shadow-sm" id="defview">
+          <h6 class="border-bottom pb-2 mb-0 color-scheme-text" id="logs-header">Activity Logs</h6>
+
+                    {% if recount == 0 %}
+                        <div class=" text-muted pt-3 border-bottom" > <!-- d-flex -->
+                            <div class="row" style="padding-left: 10px;margin-right: -30px">
+                                <div class="col-md-12" >
+                                  <p class="pb-3 mb-0 small lh-sm " style="text-align:center">
+                                    No Available Record
+                                  </p>
+                                </div>
+
+                            </div>
+                        </div>
+                    {% else %}
+                        {% for log in logs %}
+                            <div class=" text-muted pt-3 border-bottom" > <!-- d-flex -->
+                                <div class="row" style="padding-left: 10px;margin-right: -30px">
+                                    <div class="col-md-1" >
+                                        {% if log.activity == 'Customization' %}
+                                            <img src="{% static '/icons/custom.png'%}" height="32px">
+                                        {% elif log.activity == 'Profile' %}
+                                            <img src="{% static '/icons/edit.png'%}" height="32px">
+                                        {% elif log.activity == 'Proof of Payment' %}
+                                            <img src="{% static '/icons/proof_payment_l.png'%}" height="32px">
+                                        {% elif log.activity == 'Repair' %}
+                                            <img src="{% static '/icons/repair.png'%}" height="32px">
+                                        {% elif log.activity == 'Report' %}
+                                            <img src="{% static '/icons/complaints_b.png'%}" height="32px">
+                                        {% elif log.activity == 'Visitor' %}
+                                            <img src="{% static '/icons/people.png'%}" height="32px">
+                                        {% elif log.activity == 'Access' and log.action == 'Logged In'%}
+                                            <img src="{% static '/icons/login.png'%}" height="32px">
+                                        {% elif log.activity == 'Access' and log.action == 'Logged Out'%}
+                                            <img src="{% static '/icons/logout.png'%}" height="32px">
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="col-md-4" style="margin-left: -40px">
+                                      <p class="pb-3 mb-0 small lh-sm ">
+                                        <strong class="d-block text-gray-dark">{{ log.activity }}</strong>
+                                          {{ log.action }}
+                                      </p>
+                                    </div>
+
+                                    <div class="col-md-7" style="display: flex; justify-content: right;">
+                                      <p class="pb-3 mb-0 small lh-sm ">
+                                          {{ log.date_time|naturaltime }}
+                                      </p>
+                                    </div>
+
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <small class="d-block text-end mt-3">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="viewall()">View All</button>
+                    </small>
+        </div>
+
+      <!-- all view -->
+        <div class="my-3 p-3 bg-body rounded shadow-sm" id="allview" style="display:none">
+          <h6 class="border-bottom pb-2 mb-0 color-scheme-text" id="logs-header">Activity Logs</h6>
+
+                    {% if recount == 0 %}
+                        <div class=" text-muted pt-3 border-bottom" > <!-- d-flex -->
+                            <div class="row" style="padding-left: 10px;margin-right: -30px">
+                                <div class="col-md-12" >
+                                  <p class="pb-3 mb-0 small lh-sm " style="text-align:center">
+                                    No Available Record
+                                  </p>
+                                </div>
+
+                            </div>
+                        </div>
+                    {% else %}
+                        {% for log in logs2 %}
+                            <div class=" text-muted pt-3 border-bottom" > <!-- d-flex -->
+                                <div class="row" style="padding-left: 10px;margin-right: -30px">
+                                    <div class="col-md-1" >
+                                        {% if log.activity == 'Customization' %}
+                                            <img src="{% static '/icons/custom.png'%}" height="32px">
+                                        {% elif log.activity == 'Profile' %}
+                                            <img src="{% static '/icons/edit.png'%}" height="32px">
+                                        {% elif log.activity == 'Proof of Payment' %}
+                                            <img src="{% static '/icons/proof_payment_l.png'%}" height="32px">
+                                        {% elif log.activity == 'Repair' %}
+                                            <img src="{% static '/icons/repair.png'%}" height="32px">
+                                        {% elif log.activity == 'Report' %}
+                                            <img src="{% static '/icons/complaints_b.png'%}" height="32px">
+                                        {% elif log.activity == 'Visitor' %}
+                                            <img src="{% static '/icons/people.png'%}" height="32px">
+                                        {% elif log.activity == 'Access' and log.action == 'Logged In'%}
+                                            <img src="{% static '/icons/login.png'%}" height="32px">
+                                        {% elif log.activity == 'Access' and log.action == 'Logged Out'%}
+                                            <img src="{% static '/icons/logout.png'%}" height="32px">
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="col-md-4" style="margin-left: -40px">
+                                      <p class="pb-3 mb-0 small lh-sm ">
+                                        <strong class="d-block text-gray-dark">{{ log.activity }}</strong>
+                                          {{ log.action }}
+                                      </p>
+                                    </div>
+
+                                    <div class="col-md-7" style="display: flex; justify-content: right;">
+                                      <p class="pb-3 mb-0 small lh-sm ">
+                                          {{ log.date_time|naturaltime }}
+                                      </p>
+                                    </div>
+
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <small class="d-block text-end mt-3">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="viewall()">Minimize</button>
+                    </small>
+        </div>
+
+        <div class="d-flex align-items-center p-3 my-3 text-white rounded shadow-sm color-scheme-bg" id="tenant-since">
+          <img class="me-3" src="{% static '/logo/myResidence_tab_l.png'%}" alt="" width="35" height="35">
+          <div class="lh-1">
+            <h1 class="h6 mb-0 text-white lh-1">Tenant</h1>
+            <small>Since {{ datejoin }}</small>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+  </div>
+</main>
+
+    <script>
+        function viewall() {
+          var x = document.getElementById("defview");
+          var y = document.getElementById("allview");
+          if (x.style.display === "none") {
+            x.style.display = "block";
+            y.style.display = "none";
+          } else {
+            x.style.display = "none";
+            y.style.display = "block";
+          }
+        }
+    </script>
+
+    <script src="{% static '/js/bootstrap.bundle.min.js'%}"></script>
+    <script src="{% static '/custom/sidebars.js'%}"></script>
+    <script src="{% static '/custom/form-validation.js'%}"></script>
+  </body>
+</html>

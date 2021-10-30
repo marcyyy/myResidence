@@ -1,0 +1,136 @@
+
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{% static '/logo/myResidence_tab.png'%}">
+    <title>Sign in</title>
+
+    <style>
+
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .center-align{
+          display:flex;
+          justify-content: center;
+          align-items: center;
+      }
+    </style>
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static '/css/bootstrap.min.css'%}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+      <link href="{% static '/custom/alert.css' %}" rel="stylesheet">
+    <link href="{% static '/custom/login.css'%}" rel="stylesheet">
+    <link href="{% static '/custom/heroes.css'%}" rel="stylesheet">
+    <link href="{% static '/custom/alert2.css' %}" rel="stylesheet">
+  </head>
+
+  <body class="text-center" style="background-image: linear-gradient(145deg, #4facfe , #13e6f2); background-size: 35%; background-repeat: no-repeat;">
+
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+    <div class='alert alert-success alert-dismissible'>
+    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+        {{message}}
+    </div>
+        {% elif message.tags == 'error' %}
+    <div class='alert alert-danger alert-dismissible'>
+    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+        {{message}}
+    </div>
+        {% elif message.tags == 'warning' %}
+    <div class='alert alert-warning alert-dismissible'>
+    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+        {{message}}
+    </div>
+        {% endif %}
+    {% endfor %}
+
+      <div class="container rounded-3 " style="box-shadow: 0 7px 50px 0 rgba(0, 0, 0, 0.29)">
+
+                  <div class="row center-align" style="display: table; ">
+
+                      <div class="col-md-4 rounded-3" style="height: 500px; display: table-cell; vertical-align: middle; width: 600px ">
+                        <img src="{% static '/logo/myResidence_full.png' %}" width="50%">
+                        <p class="py-4" style="text-align: center;color: white;line-height: 1.3;font-size: 15px">Tenant Login dolor sit amet,<br>consectetur adipiscing elit, sed do<br>eiusmod tempor. </p>
+                      </div>
+
+                      <div class="col-sm-6 col-md-8" style=" display: table-cell; vertical-align: middle; " >
+                          <a href="{% url 'admin:index' %}" style="display: flex; justify-content:right; margin-top:-45px;margin-right: 5px;margin-bottom: 40px">
+                              <img src="{% static 'icons/info.png' %}" height="25px" >
+                          </a>
+
+                          <main class="form-signin">
+                              <form method="POST">
+                                 {% csrf_token %}
+                                <h1 class="h3 mb-3 fw-normal">Log In</h1>
+
+                                <div class="form-floating">
+                                  <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                                  <label for="username">Username</label>
+                                </div>
+                                <div class="form-floating">
+                                  <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                                  <label for="password">Password</label>
+                                </div>
+
+                                <div class="checkbox mb-3">
+                                  <label>
+                                    <input type="checkbox" value="lsRememberMe" id="rememberMe"> Remember me
+                                  </label>
+
+                                </div>
+                                <button class="w-100 btn btn-lg btn-primary" type="submit" onclick="lsRememberMe()" >Sign in</button>
+                                <a href="{% url 'register' %}" style="text-decoration: none;"><button class="w-100 btn btn-lg btn-secondary" style="margin-top:5px;color:black" type="button">Register</button></a>
+                              </form>
+                          </main>
+                    </div>
+
+                </div>
+      </div>
+
+  </body>
+
+  <script type="text/javascript">
+
+    const rmCheck = document.getElementById("rememberMe"),
+    emailInput = document.getElementById("username");
+
+    if (localStorage.checkbox && localStorage.checkbox !== "") {
+      rmCheck.setAttribute("checked", "checked");
+      emailInput.value = localStorage.username;
+    } else {
+      rmCheck.removeAttribute("checked");
+      emailInput.value = "";
+    }
+
+    function lsRememberMe() {
+      if (rmCheck.checked && emailInput.value !== "") {
+        localStorage.username = emailInput.value;
+        localStorage.checkbox = rmCheck.value;
+      } else {
+        localStorage.username = "";
+        localStorage.checkbox = "";
+      }
+    } 
+  </script>
+
+      <script src="{% static '/custom/alert.js' %}"></script>
+</html>

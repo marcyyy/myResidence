@@ -1,0 +1,274 @@
+
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{% static '/logo/myResidence_tab.png'%}">
+    <title>Repair Request</title>
+
+    <!-- Min Today Date -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static '/css/bootstrap.min.css'%}" rel="stylesheet">
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .color-scheme-bg{
+          background-color: {{ request.user.accountcustomization.color_scheme }};
+      }
+
+      .color-scheme-text{
+          color: {{ request.user.accountcustomization.color_scheme }};
+      }
+    </style>
+
+    <!-- Custom styles for this template -->
+    <link href="{% static '/custom/alert.css' %}" rel="stylesheet">
+    <script src="{% static '/custom/alert.js' %}"></script>
+    <link href="{% static '/custom/sidebars.css'%} " rel="stylesheet">
+    <link href="{% static '/custom/alert2.css' %}" rel="stylesheet">
+  </head>
+  <body>
+
+  {% for message in messages %}
+        {% if message.tags == 'success' %}
+    <div class='alert alert-success alert-dismissible'>
+    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+        {{message}}
+    </div>
+        {% elif message.tags == 'error' %}
+    <div class='alert alert-danger alert-dismissible'>
+    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+        {{message}}
+    </div>
+        {% elif message.tags == 'warning' %}
+    <div class='alert alert-warning alert-dismissible'>
+    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+        {{message}}
+    </div>
+        {% endif %}
+    {% endfor %}
+
+<header class="p-3 text-white color-scheme-bg">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+          <img src="{% static '/logo/myResidence_icon.png'%}" height="30px" style="margin-left: -125px">
+          <img src="{% static '/logo/myResidence.png'%}" height="30px" style="margin-left: -5px">
+        </ul>
+
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0" style="padding-bottom: 10px">
+            <li class="nav-item">
+                <a href="{% url 'home' %}" class="py-3" title="Home" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/home.png'%}" height="30px" >
+                </a>
+            </li>
+            <li style="margin-left: 40px">
+                <a href="{% url 'billings' %}" class="py-3" title="Billings" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/billings.png'%}" height="30px" >
+                </a>
+            </li>
+            <li style="margin-left: 40px">
+                <a href="#" class="py-3  border-bottom" title="Complaints"  data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/complaints_w.png'%}" height="30px" >
+                </a>
+            </li>
+            <li style="margin-left: 40px">
+                <a href="{% url 'visitor' %}" class="py-3" title="Visitor Requests" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                  <img src="{% static '/icons/vs.png'%}" height="30px" >
+                </a>
+            </li>
+        </ul>
+
+        <div class="text-end" style="display:flex">
+          <!--div>
+            <input type="image" src="../assets/icons/bell.png" height="25px" style="margin-right: 20px;margin-top:4px"/>
+          </div-->
+          <div class="dropdown">
+            <a href="#" class="d-flex align-items-center link-light text-decoration-none dropdown-toggle" id="dropdownUser2" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="{{ request.user.tenant.image.url }}" alt="" width="32" height="32" class="rounded-circle me-2">
+                <strong style="color: white">{{request.user.first_name}} {{request.user.last_name}}</strong>
+            </a>
+            <ul class="dropdown-menu text-small shadow" aria-labelledby="dropdownUser2">
+              <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'settings' %}">Settings</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="{% url 'logout' %}">Sign out</a></li>
+            </ul>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+<main style="padding:15px">
+
+   <div class="flex-shrink-0 p-3" style="width: 220px;">
+    <ul class="list-unstyled ps-0">
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#billings-collapse" aria-expanded="false" >
+          Report a Problem
+        </button>
+        <div class="collapse" id="billings-collapse">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li><a href="{% url 'report_add' %}" class="link-dark rounded">Send Report</a></li>
+            <li><a href="{% url 'report_tickets' %}" class="link-dark rounded" >Report Tickets</a></li>
+          </ul>
+        </div>
+      </li>
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#payments-collapse" aria-expanded="true" >
+          Repair Requests
+        </button>
+        <div id="payments-collapse">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li><a href="#" class="link-dark rounded"  style="color:#4facfe">Send Repair Request</a></li>
+            <li><a href="{% url 'repair_track' %}" class="link-dark rounded" >Track Repair Ticket</a></li>
+            <li><a href="{% url 'repair_tickets' %}" class="link-dark rounded" >Repair Tickets</a></li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="b-example-divider" style="width: 0px"></div>
+
+  <div class="container-fluid" style="padding-left:30px;margin-top: -15px">
+
+    <div class="row g-5">
+      <div class="col-md-7 col-lg-12">
+        <h2 style="margin-top: 20px; margin-bottom: 15px">Repair Service Request Form</h2> 
+        <p class="text-muted" style="margin-top:-15px">For all your Repair and Maintenance concerns, please fill-out the fields below. We will get back to you as soon as possible.</p>
+        <hr>
+
+       <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+           {% csrf_token %}
+
+          <div class="row g-3">
+
+           <div class="col-md-12" id="category-length">
+              <label for="select_category" class="form-label">Category</label>
+              <select class="form-select" id="select_category" onchange="selectChange(event)" required>
+                <option disabled selected value> Select an option </option>
+                <option value="Foundation">Foundation</option>
+                <option value="Drainage">Drainage</option>
+                <option value="Plumbing">Plumbing</option>
+                <option value="Electrical">Electrical</option>
+                <option value="Others" >Others</option>
+              </select>
+            </div>
+
+            <div class="col-6" id="others-hidden" hidden="true">
+              <label for="others_complaint" id="others_label" class="form-label" >Specify</label>
+              <input type="text" class="form-control" id="others_complaint" name="category" required>
+              <div class="invalid-feedback">
+                Please provide a Repair Category.
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label for="details" class="form-label">Details</label>
+              <textarea class="form-control" name="details" id="details" style="resize:none; height:100px" required></textarea>
+              <div class="invalid-feedback">
+                Please fill out Report Details.
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label for="date_available" class="form-label">Date Available</label>
+              <input type="date" class="form-control" id="date_available" name="date_available" min="" required >
+            </div>
+
+          <div class="col-12" style="margin-top: 15px">                 
+            <label for="image" class="form-label">Supporting Image <span class="text-muted">(Optional)</span></label>
+              <div class="input-group">
+                <input type="file" class="form-control" name="image" id="image" onchange="loadFile(event)" >
+              </div>
+          </div>
+
+          <hr class="my-4">
+
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap ">  
+            <div style="display: flex; justify-content:left; align-items: left">
+              <button class=" btn btn-secondary btn-lg" type="submit" style="width: 100px">Clear</button>
+            </div>
+
+            <div style="display: flex; justify-content:right; align-items: right">
+              <button class=" btn btn-primary btn-lg" type="submit" style="width: 200px">Submit</button>
+            </div>
+
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+      <script>
+      var loadFile = function(event) {
+        var output = document.getElementById('output');
+        output.src = URL.createObjectURL(event.target.files[0]);
+        output.onload = function() {
+          URL.revokeObjectURL(output.src) // free memory
+        }
+      };
+
+      function selectChange(e) {
+        if(e.target.value == "Others"){
+          document.getElementById("category-length").className = "col-md-6";
+          document.getElementById("others-hidden").hidden = false;
+          document.getElementById("others_complaint").required = true;
+        }
+        else{
+          document.getElementById("category-length").className = "col-md-12";
+          document.getElementById("others-hidden").hidden = true;
+          document.getElementById("others_complaint").required = false;
+
+          var text1 = document.getElementById("select_category").value;
+          document.getElementById("others_complaint").value = text1;
+        }
+      }
+
+      $(function(){
+          var dtToday = new Date();
+          
+          var month = dtToday.getMonth() + 1;
+          var day = dtToday.getDate();
+          var year = dtToday.getFullYear();
+          if(month < 10)
+              month = '0' + month.toString();
+          if(day < 10)
+              day = '0' + day.toString();
+          
+          var maxDate = year + '-' + month + '-' + day;
+          
+          document.getElementById("date_available").min = maxDate;
+      });
+      
+    </script>
+          <script src="{% static '/js/bootstrap.bundle.min.js'%} "></script>
+          <script src="{% static '/custom/form-validation.js'%} "></script>
+          <script src="{% static '/custom/sidebars.js'%} "></script>
+  </body>
+</html>

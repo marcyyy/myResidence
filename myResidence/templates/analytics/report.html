@@ -1,0 +1,599 @@
+
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{% static '/logo/myResidence_tab.png'%}">
+    <title>Reports & Analytics</title>
+
+    <style>
+
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .center-align{
+          display:flex;
+          justify-content: center;
+          align-items: center;
+      }
+    </style>
+
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static '/semantic/semantic.css'%}" rel="stylesheet">
+    <script src="{% static '/semantic/semantic.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body style="padding:20px 50px 50px 50px">
+
+        <div style="justify-content: center; align-content: center; display: flex; padding:10px">
+            <img src="{% static '/logo/myResidence_green.png'%}" width="200px">
+        </div>
+
+        <div class="ui tabular menu">
+          <a class="item active" href="#">
+              Reports and Analytics
+          </a>
+          <a class="item" href="{% url 'attrition' %}">
+            Tenant Attrition
+          </a>
+          <a class="item right" href="{% url 'admin:index' %}">
+              Back
+          </a>
+        </div>
+
+        <div class="ui link cards">
+
+        <!------------------------------------------------- LOGS ------------------------------------------------------------>
+                  <div class="card" style="width:49%; margin-top:30px">
+                    <div class="image">
+
+                    </div>
+                    <div class="content ui segment" style="padding:20px">
+                        <div class="ui two column very relaxed grid">
+                            <div class="column" style="width: 100%">
+                              <div class="header" style="font-size: 25px;font-weight: bold;">Logins</div>
+
+                              <div class="meta" style="margin-top: 3px; margin-bottom: 10px">
+                                <a>Tenants Activity</a>
+                              </div>
+
+                                <div>
+                                  <canvas id="loginChart">
+                                      <script>
+                                        var ctx = document.getElementById('loginChart').getContext('2d');
+                                        var myChart = new Chart(ctx, {
+                                            type: 'line',
+                                            data: {
+                                                labels: ['January', 'February', 'March', 'April', 'May', 'June',
+                                                            'July', 'August', 'September', 'October', 'November', 'December'],
+                                                datasets: [{
+                                                    label: 'Monthly Login',
+                                                    data: [{{ln1}},{{ln2}},{{ln3}},{{ln4}},{{ln5}},{{ln6}},{{ln7}},{{ln8}},{{ln9}},{{ln10}},{{ln11}},{{ln12}}],
+                                                    backgroundColor: [
+                                                        'rgba(64,96,255,0.2)',
+                                                    ],
+                                                    borderColor: [
+                                                        'rgb(64,96,255)',
+                                                    ],
+                                                    borderWidth: 1
+
+                                                }]
+                                            },
+                                            options: {
+                                                scales: {
+                                                }
+                                            }
+                                        });
+                                      </script>
+                                  </canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'admin:index' %}">
+                        <div class="ui bottom attached button">
+                           <i class="archive icon"></i>
+                             View Table
+                        </div>
+                    </a>
+
+                  </div>
+
+        <!------------------------------------------------- BILLINGS ------------------------------------------------------------>
+                  <div class="card" style="width:49%; margin-top:30px">
+                    <div class="image">
+
+                    </div>
+                    <div class="content ui segment" style="padding:20px">
+                        <div class="ui two column very relaxed grid">
+                            <div class="column" style="width: 100%">
+                              <div class="header" style="font-size: 25px;font-weight: bold;">Billings</div>
+
+                              <div class="meta" style="margin-top: 3px; margin-bottom: 10px">
+                                <a>Status</a>
+                              </div>
+
+                                <div>
+                                  <canvas id="billChart">
+                                      <script>
+                                        var ctx = document.getElementById('billChart').getContext('2d');
+                                        var myChart = new Chart(ctx, {
+                                            type: 'line',
+                                            data: {
+                                                labels: ['January', 'February', 'March', 'April', 'May', 'June',
+                                                            'July', 'August', 'September', 'October', 'November', 'December'],
+                                                datasets: [
+                                                    {
+                                                        label: 'Paid',
+                                                        data: [{{b1}},{{b2}},{{b3}},{{b4}},{{b5}},{{b6}},{{b7}},{{b8}},{{b9}},{{b10}},{{b11}},{{b12}}],
+                                                        backgroundColor: [
+                                                            'rgba(70,255,64,0.1)',
+                                                        ],
+                                                        borderColor: [
+                                                            'rgb(70,255,64, 1)',
+                                                        ],
+                                                        borderWidth: 1,
+                                                        fill: true,
+                                                    },
+                                                    {
+                                                        label: 'Pending',
+                                                        data: [{{bd1}},{{bd2}},{{bd3}},{{bd4}},{{bd5}},{{bd6}},{{bd7}},{{bd8}},{{bd9}},{{bd10}},{{bd11}},{{bd12}}],
+                                                        backgroundColor: [
+                                                            'rgba(255,131,64,0.1)',
+                                                        ],
+                                                        borderColor: [
+                                                            'rgb(255,131,64, 1)',
+                                                        ],
+                                                        borderWidth: 1,
+                                                        fill: true,
+                                                    },
+                                                    {
+                                                        label: 'Overdue',
+                                                        data: [{{bo1}},{{bo2}},{{bo3}},{{bo4}},{{bo5}},{{bo6}},{{bo7}},{{bo8}},{{bo9}},{{bo10}},{{bo11}},{{bo12}}],
+                                                        backgroundColor: [
+                                                            'rgba(161,28,28,0.1)',
+                                                        ],
+                                                        borderColor: [
+                                                            'rgb(161,28,28)',
+                                                        ],
+                                                        borderWidth: 1,
+                                                        fill: true,
+                                                    }
+                                                ]
+                                            },
+                                            options: {
+                                                scales: {
+                                                }
+                                            }
+                                        });
+                                      </script>
+                                  </canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'admin:myResidence_billing_changelist' %}">
+                        <div class="ui bottom attached button">
+                           <i class="archive icon"></i>
+                             View Table
+                        </div>
+                    </a>
+
+                  </div>
+
+        <!------------------------------------------------- REPORT ------------------------------------------------------------>
+                  <div class="card" style="width:100%; margin-top:50px">
+                    <div class="image">
+
+                    </div>
+                    <div class="content ui segment" style="padding:30px">
+                        <div class="ui two column very relaxed grid" >
+                            <div class="column" style="width: 40%; overflow-y: scroll;">
+                              <div class="header" style="font-size: 25px;font-weight: bold;">Report Tickets</div>
+
+                              <div class="meta" style="margin-top: 3px; margin-bottom: 10px">
+                                <a>Categories</a>
+                              </div>
+
+                              <div class="ui middle aligned divided list">
+                                  {% for re in refloat %}
+                                     {% if re.category == 'Payment' or re.category == 'Facility' or re.category == 'Repair' or re.category == 'Neighbour' or re.category == 'Staff' or re.category == 'Noise' or re.category == 'Pets' or re.category == 'Rules' or re.category == 'Website' %}
+                                          <div class="item">
+                                            <div class="right floated content">
+                                              {{ re.count|floatformat:2 }}%
+                                            </div>
+                                            <div class="content">
+                                              {{ re.category }}
+                                            </div>
+                                          </div>
+                                     {% else %}
+                                          <div class="item">
+                                            <div class="right floated content">
+                                              {{ re.count|floatformat:2 }}%
+                                            </div>
+                                            <div class="content">
+                                              {{ re.category }} (Others)
+                                            </div>
+                                          </div>
+                                     {% endif %}
+                                  {% endfor %}
+                              </div>
+
+                              <div style="position:absolute; bottom: 0; padding-bottom:20px">
+                                <!--div class="header" style="font-size: 20px;margin-bottom:6px">Interpretation</div>
+                                <p style="text-wrap: normal; text-align: justify; padding-right:30px">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                                        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                                        nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+                                        reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                                        officia deserunt mollit anim id est laborum.
+                                    </p-->
+
+                                  {% if renames.exists %}
+                                        {% for names in renames %}
+                                            <div class="header" style="font-size: 18px;margin-bottom:6px">Names</div>
+                                            <div class="meta" style="margin-top: -7px; margin-bottom: 5px">
+                                                <a>Unresolved</a>
+                                            </div>
+                                                <div class="item" style="padding-right:30px">
+                                                    <div class="right floated content">
+                                                        {{ names.staff }} (Staff)
+                                                    </div>
+                                                </div>
+                                        {% endfor %}
+                                        {% if renames2.exists %}
+                                            {% for names in renames2 %}
+                                                    <div class="item" style="padding-right:30px">
+                                                        <div class="right floated content">
+                                                            {{ names.neighbour }} (Tenant/Room)
+                                                        </div>
+                                                    </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                  {% elif renames2.exists and not renames.exists %}
+                                            <div class="header" style="font-size: 18px;margin-bottom:6px">Names</div>
+                                            <div class="meta" style="margin-top: -7px; margin-bottom: 5px">
+                                                <a>Unresolved</a>
+                                            </div>
+                                            {% for names in renames2 %}
+                                                    <div class="item" style="padding-right:30px">
+                                                        <div class="right floated content">
+                                                            {{ names.neighbour }} (Tenant/Room)
+                                                        </div>
+                                                    </div>
+                                            {% endfor %}
+                                  {% else %}
+                                          <div class="header" style="font-size: 18px;margin-bottom:6px">Names</div>
+                                                <div class="item" style="padding-right:30px">
+                                                <div class="content">
+                                                  No Available Data
+                                                </div>
+                                           </div>
+                                  {% endif %}
+                              </div>
+                            </div>
+
+                            <div class="column" style="width: 60%">
+                                <div>
+                                  <canvas id="reChart">
+                                      <script>
+                                        var ctx = document.getElementById('reChart').getContext('2d');
+                                        var myChart = new Chart(ctx, {
+                                            type: 'bar',
+                                            data: {
+                                                labels: ['Payment','Facility','Repair','Neighbour','Staff','Noise','Pets','Rules','Website','Others'],
+                                                datasets: [{
+                                                    label: 'Category',
+                                                    data: [{{re1}},{{re2}},{{re3}},{{re4}},{{re5}},{{re6}},{{re7}},{{re8}},{{re9}},{{re0}}],
+                                                    backgroundColor: [
+                                                        'rgba(255, 0, 0, 0.2)',
+                                                        'rgba(54, 162, 235, 0.2)',
+                                                        'rgba(255, 206, 86, 0.2)',
+                                                        'rgba(75, 192, 192, 0.2)',
+                                                        'rgba(153, 102, 255, 0.2)',
+                                                        'rgba(255, 159, 64, 0.2)',
+                                                        'rgba(255, 51, 255, 0.2)',
+                                                        'rgba(51, 255, 255, 0.2)',
+                                                        'rgba(0, 204, 0, 0.2)',
+                                                        'rgba(255,102,102, 0.2)',
+                                                    ],
+                                                    borderColor: [
+                                                        'rgba(255, 0, 0, 0.8)',
+                                                        'rgba(54, 162, 235, 1)',
+                                                        'rgba(255, 206, 86, 1)',
+                                                        'rgba(75, 192, 192, 1)',
+                                                        'rgba(153, 102, 255, 1)',
+                                                        'rgba(255, 159, 64, 1)',
+                                                        'rgba(255, 51, 255, 1)',
+                                                        'rgba(51, 255, 255, 1)',
+                                                        'rgba(0, 204, 0, 1)',
+                                                        'rgba(255,102,102, 1)',
+                                                    ],
+                                                    borderWidth: 1
+                                                }]
+                                            },
+                                            options: {
+                                                scales: {
+                                                    yAxes: [{
+                                                        ticks: {
+                                                            beginAtZero: true
+                                                        }
+                                                    }]
+                                                }
+                                            }
+                                        });
+                                      </script>
+                                  </canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'admin:myResidence_report_changelist' %}">
+                        <div class="ui bottom attached button">
+                           <i class="archive icon"></i>
+                             View Table
+                        </div>
+                    </a>
+
+                  </div>
+
+        <!------------------------------------------------- REPAIR ------------------------------------------------------------>
+                  <div class="card" style="width:100%; margin-top:50px">
+                    <div class="image">
+
+                    </div>
+                    <div class="content ui segment" style="padding:30px">
+                        <div class="ui two column very relaxed grid" >
+                            <div class="column" style="width: 40%; overflow-y: scroll;">
+                              <div class="header" style="font-size: 25px;font-weight: bold;">Repair Tickets</div>
+
+                              <div class="meta" style="margin-top: 3px; margin-bottom: 10px">
+                                <a>Categories</a>
+                              </div>
+
+                              <div class="ui middle aligned divided list">
+                                  {% for ra in rafloat %}
+                                     {% if ra.category == 'Foundation' or ra.category == 'Drainage' or ra.category == 'Plumbing' or ra.category == 'Electrical'%}
+                                          <div class="item">
+                                            <div class="right floated content">
+                                              {{ ra.count|floatformat:2 }}%
+                                            </div>
+                                            <div class="content">
+                                              {{ ra.category }}
+                                            </div>
+                                          </div>
+                                     {% else %}
+                                          <div class="item">
+                                            <div class="right floated content">
+                                              {{ ra.count|floatformat:2 }}%
+                                            </div>
+                                            <div class="content">
+                                              {{ ra.category }} (Others)
+                                            </div>
+                                          </div>
+                                     {% endif %}
+                                  {% endfor %}
+                              </div>
+
+                              <!--div style="position:absolute; bottom: 0; padding-bottom:20px">
+                                <div class="header" style="font-size: 20px;margin-bottom:6px">Interpretation</div>
+                                <p style="text-wrap: normal; text-align: justify; padding-right:30px">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                                    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                                    nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+                                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                                    officia deserunt mollit anim id est laborum.
+                                </p>
+                              </div-->
+                            </div>
+
+                            <div class="column" style="width: 60%">
+                                <div>
+                                  <canvas id="raChart">
+                                      <script>
+                                        var ctx = document.getElementById('raChart').getContext('2d');
+                                        var myChart = new Chart(ctx, {
+                                            type: 'bar',
+                                            data: {
+                                                labels: ['Foundation','Drainage','Plumbing','Electrical','Others'],
+                                                datasets: [{
+                                                    label: 'Category',
+                                                    data: [{{ra1}},{{ra2}},{{ra3}},{{ra4}},{{ra5}}],
+                                                    backgroundColor: [
+                                                        'rgb(64,109,255, 0.2)',
+                                                        'rgba(255, 51, 255, 0.2)',
+                                                        'rgb(51,255,153, 0.2)',
+                                                        'rgb(204,156,0, 0.2)',
+                                                        'rgba(255,102,102, 0.2)',
+                                                    ],
+                                                    borderColor: [
+                                                        'rgb(64,109,255, 1)',
+                                                        'rgba(255, 51, 255, 1)',
+                                                        'rgb(51,255,153, 1)',
+                                                        'rgb(204,156,0, 1)',
+                                                        'rgba(255,102,102, 1)',
+                                                    ],
+                                                    borderWidth: 1
+                                                }]
+                                            },
+                                            options: {
+                                                scales: {
+                                                    yAxes: [{
+                                                        ticks: {
+                                                            beginAtZero: true
+                                                        }
+                                                    }]
+                                                }
+                                            }
+                                        });
+                                      </script>
+                                  </canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'admin:myResidence_repair_changelist' %}">
+                        <div class="ui bottom attached button">
+                           <i class="archive icon"></i>
+                             View Table
+                        </div>
+                    </a>
+
+                  </div>
+
+        <!------------------------------------------------- VISITORS ------------------------------------------------------------>
+                  <div class="card" style="width:100%; margin-top:50px">
+                    <div class="image">
+
+                    </div>
+                    <div class="content ui segment" style="padding:30px">
+                        <div class="ui two column very relaxed grid" >
+                            <div class="column" style="width: 40%; overflow-y: scroll;">
+                              <div class="header" style="font-size: 25px;font-weight: bold;">Visitor Requests</div>
+
+                              <div class="meta" style="margin-top: 3px; margin-bottom: 10px">
+                                <a>Purposes</a>
+                              </div>
+
+                              <div class="ui middle aligned divided list">
+                                  {% for v in vfloat %}
+                                     {% if v.purpose == 'Lounge' or v.purpose == 'Stay' or v.purpose == 'Vacation' or v.purpose == 'Refuge' or v.purpose == 'Meeting' or v.purpose == 'Event' or v.purpose == 'User' %}
+                                          <div class="item">
+                                            <div class="right floated content">
+                                              {{ v.count|floatformat:2 }}%
+                                            </div>
+                                            <div class="content">
+                                              {{ v.purpose }}
+                                            </div>
+                                          </div>
+                                     {% else %}
+                                          <div class="item">
+                                            <div class="right floated content">
+                                              {{ v.count|floatformat:2 }}%
+                                            </div>
+                                            <div class="content">
+                                              {{ v.purpose }} (Others)
+                                            </div>
+                                          </div>
+                                     {% endif %}
+                                  {% endfor %}
+                              </div>
+
+                              <!--div style="position:absolute; bottom: 0; padding-bottom:20px">
+                                <div class="header" style="font-size: 20px;margin-bottom:6px">Interpretation</div>
+                                <p style="text-wrap: normal; text-align: justify; padding-right:30px">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                                    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                                    nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+                                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+                                    officia deserunt mollit anim id est laborum.
+                                </p>
+                              </div-->
+                            </div>
+
+                            <div class="column" style="width: 60%">
+                                <div>
+                                  <canvas id="vChart">
+                                      <script>
+                                        var ctx = document.getElementById('vChart').getContext('2d');
+                                        var myChart = new Chart(ctx, {
+                                            type: 'bar',
+                                            data: {
+                                                labels: ['Lounge','Stay','Vacation','Refuge','Meeting','Event','Assc','Others'],
+                                                datasets: [{
+                                                    label: 'Purpose',
+                                                    data: [{{v1}},{{v2}},{{v3}},{{v4}},{{v5}},{{v6}},{{v7}},{{v8}}],
+                                                    backgroundColor: [
+                                                        'rgba(153, 102, 255, 0.2)',
+                                                        'rgba(255, 159, 64, 0.2)',
+                                                        'rgba(255, 51, 255, 0.2)',
+                                                        'rgba(51, 255, 255, 0.2)',
+                                                        'rgba(37,0,204,0.2)',
+                                                        'rgba(255,102,102,0.2)',
+                                                        'rgba(64,153,255,0.2)',
+                                                        'rgba(173,255,51,0.2)',
+                                                    ],
+                                                    borderColor: [
+                                                        'rgba(153, 102, 255, 1)',
+                                                        'rgba(255, 159, 64, 1)',
+                                                        'rgba(255, 51, 255, 1)',
+                                                        'rgba(51, 255, 255, 1)',
+                                                        'rgba(37,0,204, 1)',
+                                                        'rgba(255,102,102, 1)',
+                                                        'rgba(64,153,255, 1)',
+                                                        'rgba(173,255,51, 1)'
+                                                    ],
+                                                    borderWidth: 1
+                                                }]
+                                            },
+                                            options: {
+                                                scales: {
+                                                    yAxes: [{
+                                                        ticks: {
+                                                            beginAtZero: true
+                                                        }
+                                                    }]
+                                                }
+                                            }
+                                        });
+                                      </script>
+                                  </canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'admin:myResidence_visitor_changelist' %}">
+                        <div class="ui bottom attached button">
+                           <i class="archive icon"></i>
+                             View Table
+                        </div>
+                    </a>
+
+                  </div>
+
+        </div>
+
+        <footer style="align-content: center; justify-content: center; display: flex; padding:80px 50px 35px 50px">
+              <div class="ui horizontal bulleted link list">
+                  <a class="item">
+                    AIJM Developers
+                  </a>
+                  <a class="item">
+                    Capstone
+                  </a>
+                  <a class="item">
+                    2021-2022
+                  </a>
+                </div>
+          </footer>
+
+  </body>
+
+</html>
+

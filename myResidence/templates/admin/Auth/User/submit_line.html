@@ -1,0 +1,17 @@
+{% extends "admin/submit_line.html" %}
+{% load jazzmin %}
+{% load static %}
+{% get_jazzmin_ui_tweaks as jazzmin_ui %}
+
+{% block extra-actions %}
+
+{# Simple link #}
+<hr>
+<div class="form-group">
+    <span>Lists:</span>
+    <a href="{% url 'admin:myResidence_tenant_changelist' %}" class="btn {{ jazzmin_ui.button_classes.warning }} form-control" target="" style="margin-top: 10px">View Tenant List</a>
+    <a href="{% url 'admin:myResidence_admin_changelist' %}" class="btn {{ jazzmin_ui.button_classes.warning }} form-control" target="" style="margin-top: 15px">View Admin List</a>
+</div>
+
+
+{% endblock %}

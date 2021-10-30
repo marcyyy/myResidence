@@ -1,0 +1,638 @@
+
+{% load static %}
+{% load humanize %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{% static '/logo/myResidence_tab.png'%}">
+    <title>Tenant Attrition</title>
+
+    <style>
+
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      .center-align{
+          display:flex;
+          justify-content: center;
+          align-items: center;
+      }
+    </style>
+
+
+    <!-- Bootstrap core CSS-->
+        <link href="{% static '/css/bootstrap.min.css'%}" rel="stylesheet">
+        <link href="{% static '/semantic/semantic.css'%}" rel="stylesheet">
+        <script src="{% static '/semantic/semantic.js' %}"></script>
+        <script src="{% static '/js/bootstrap.bundle.min.js'%} "></script>
+        <link href="{% static '/custom/alert.css' %}" rel="stylesheet">
+        <link href="{% static '/custom/alert2.css' %}" rel="stylesheet">
+        <script src="{% static '/custom/alert.js' %}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+  </head>
+  <body style="padding:20px 50px 50px 50px">
+
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+                <div class='alert alert-success alert-dismissible'>
+                <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+                    {{message}}
+                </div>
+                    {% elif message.tags == 'error' %}
+                <div class='alert alert-danger alert-dismissible'>
+                <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+                    {{message}}
+                </div>
+                    {% elif message.tags == 'warning' %}
+                <div class='alert alert-warning alert-dismissible'>
+                <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+                    {{message}}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        <div style="justify-content: center; align-content: center; display: flex; padding:10px">
+            <img src="{% static '/logo/myResidence_green.png'%}" width="200px">
+        </div>
+
+        <div class="ui tabular menu">
+          <a class="item" href="{% url 'report' %}">
+            Reports and Analytics
+          </a>
+          <a class="item active" href="#">
+            Tenant Attrition
+          </a>
+          <a class="item right" href="{% url 'admin:index' %}">
+              Back
+          </a>
+        </div>
+
+        <div class="ui five cards" >
+
+                          <div class="card" style="padding:20px; box-shadow: none"  >
+                            <div class="ui green statistic">
+                                <div class="value">
+                                  <i class="user circle icon"></i> {{ tenantctr }}
+                                </div>
+                                <div class="label" style="margin-top:10px">
+                                  Total
+                                </div>
+                                <div class="meta" style="text-align: center">
+                                  Number of Tenants
+                                </div>
+                            </div>
+                          </div>
+
+                           <div class="card" style="padding:20px; box-shadow: none"  >
+                            <div class="ui violet statistic">
+                                <div class="value">
+                                  <i class="spinner icon"></i> {{ noattrit_tot }}
+                                </div>
+                                <div class="label" style="margin-top:10px">
+                                  No Attrition Score
+                                </div>
+                                <div class="meta" style="text-align: center">
+                                  Number of Tenants
+                                </div>
+                            </div>
+                          </div>
+
+                          <div class="card" style="padding:20px; box-shadow: none"  >
+                            <div class="ui red statistic">
+                                <div class="value">
+                                  <i class="clock outline icon"></i> {{ updatetot }}
+                                </div>
+                                <div class="label" style="margin-top:10px">
+                                   Outdated
+                                </div>
+                                <div class="meta" style="text-align: center">
+                                    Attrition Score
+                                </div>
+                            </div>
+                          </div>
+
+                           <div class="card" style="padding:20px; box-shadow: none"  >
+                            <div class="ui blue statistic">
+                                <div class="value">
+                                    <i class="thumbs up outline icon"></i> {{ scoreavg|floatformat:1 }}
+                                </div>
+                                <div class="label" style="margin-top:10px">
+                                    Average Score
+                                </div>
+                                <div class="meta" style="text-align: center">
+                                    Attrition Percentage
+                                </div>
+                            </div>
+                          </div>
+
+                          <div class="card" style="padding:20px; box-shadow: none"  >
+                            <div class="ui yellow statistic">
+                                <div class="value">
+                                  <i class="exclamation triangle icon"></i> {{ hightot }}
+                                </div>
+                                <div class="label" style="margin-top:10px">
+                                  65 Score and Above
+                                </div>
+                                <div class="meta" style="text-align: center">
+                                  High Probability
+                                </div>
+                            </div>
+                          </div>
+
+        </div>
+
+        <div class="content ui segment" style="border:none; box-shadow: none; justify-content: center; align-content: center; display: flex">
+                    <div class="card" style="width: 80%">
+                            <div class="content ui segment" style="padding:20px;">
+                                <div class="ui two column very relaxed grid">
+                                    <div class="column" style="width: 100%">
+                                      <div class="header" style="font-size: 25px;font-weight: bold;">Tenants Attrition</div>
+
+                                      <div class="meta" style="margin-top: 3px; margin-bottom: 10px">
+                                        <a>Attrition Probabilities</a>
+                                      </div>
+
+                                        <div>
+                                          <canvas id="attritionChart">
+                                              <script>
+                                                var ctx = document.getElementById('attritionChart').getContext('2d');
+                                                var myChart = new Chart(ctx, {
+                                                    type: 'scatter',
+                                                    data: {
+                                                        labels: [
+                                                                {% for atr in attrit %}
+                                                                     '{{atr.attrition_probability}}',
+                                                                {% endfor %}
+                                                            ],
+                                                        datasets: [{
+                                                            label: 'Attrition Probability',
+                                                            data: [
+                                                                {% for atr in attrit %}
+                                                                     '{{atr.attrition_probability}}' ,
+                                                                {% endfor %}
+                                                            ],
+                                                            backgroundColor: [
+                                                                'rgb(198,30,54)',
+                                                            ],
+                                                            borderColor: [
+                                                                'rgba(198,30,54,0.2)',
+                                                            ],
+                                                            borderWidth: 1
+
+                                                        }]
+                                                    },
+                                                    options: {
+                                                        scales: {
+                                                            yAxes: [{
+                                                                ticks: {
+                                                                    beginAtZero: true
+                                                                }
+                                                            }]
+                                                        }
+                                                    }
+                                                });
+                                              </script>
+                                          </canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <a href="{% url 'admin:myResidence_attritionprediction_changelist' %}">
+                                <div class="ui bottom attached button">
+                                   <i class="archive icon"></i>
+                                     View Table
+                                </div>
+                            </a>
+
+                          </div>
+        </div>
+
+        <div class="ui large horizontal divided list divider" style="align-content: center; justify-content: center; display: flex; margin-top: 50px">
+
+              <div class="item" style="padding-right: 20px; padding-left: 20px">
+                   <div class="ui tiny statistic">
+                         <div class="value" >
+                             <i class="circle icon" style="color: #217b48"></i>
+                         </div>
+                         <div class="content" style="margin-top:15px; font-size: 15px">
+                             Rare
+                         </div>
+                   </div>
+              </div>
+
+              <div class="item" style="padding-right: 20px; padding-left: 20px">
+                   <div class="ui tiny statistic" >
+                         <div class="value" >
+                             <i class="circle icon" style="color: #1bcfe0"></i>
+                         </div>
+                         <div class="content" style="margin-top:15px; font-size: 15px">
+                             Unlikely
+                         </div>
+                   </div>
+              </div>
+
+              <div class="item" style="padding-right: 20px; padding-left: 20px">
+                   <div class="ui tiny yellow statistic">
+                         <div class="value" >
+                             <i class="circle icon"></i>
+                         </div>
+                         <div class="content" style="margin-top:15px; font-size: 15px">
+                             Possible
+                         </div>
+                   </div>
+              </div>
+
+              <div class="item" style="padding-right: 20px; padding-left: 20px">
+                   <div class="ui tiny red statistic">
+                         <div class="value" >
+                             <i class="circle icon"></i>
+                         </div>
+                         <div class="content" style="margin-top:15px; font-size: 15px">
+                             Certain
+                         </div>
+                   </div>
+              </div>
+
+        </div>
+
+        <div class="ui cards" style="justify-content: center; align-content: center; display: flex; margin-top:50px">
+
+            {% for each in tenants %}
+
+                <div class="card" style="padding: 7px; margin-right:15px">
+                    <div class="content">
+
+                    <!-- Profile -->
+                          <img class="right floated mini ui image" src="{{ each.image.url }}">
+                          <div class="header">
+                            {{ each.account.first_name }} {{ each.account.last_name }}
+                          </div>
+                          <div class="meta">
+                            Room {{ each.unit }}
+                          </div>
+
+                        <ul class="list-unstyled p-1 border-bottom" style="margin-top:10px; justify-content: left;">
+                                <li style="display: flex">
+                                  <img class="bd-placeholder-img flex-shrink-0 me-2 rounded" src="{% static '/icons/person_b.png'%}" height="20px">
+                                  <p class="" style="font-size:15px">{{ each.account.username }}</p>
+                                </li>
+                                <li style="display: flex; margin-top: 5px">
+                                  <img class="bd-placeholder-img flex-shrink-0 me-2 rounded" src="{% static '/icons/birthday.png'%}" height="20px">
+                                  <p class="" style="font-size:15px">{{ each.dateofbirth }}</p>
+                                </li>
+                                <li style="display: flex; margin-top: 5px">
+                                  <img class="bd-placeholder-img flex-shrink-0 me-2 rounded" src="{% static '/icons/phone.png'%}" height="20px">
+                                  <p class="" style="font-size:15px">{{ each.contact }}</p>
+                                </li>
+                                <li style="display: flex; margin-top: 5px">
+                                  <img class="bd-placeholder-img flex-shrink-0 me-2 rounded" src="{% static '/icons/email.png'%}" height="20px">
+                                  <p class="" style="font-size:15px">{{ each.account.email }}</p>
+                                </li>
+                                <li style="display: flex; margin-top: 5px;  margin-bottom:10px">
+                                  <img class="bd-placeholder-img flex-shrink-0 me-2 rounded" src="{% static '/icons/work.png'%}" height="20px">
+                                  <p class="" style="font-size:15px; word-wrap: break-word; width: 100%;">{{ each.work_address }}</p>
+                                </li>
+                        </ul>
+
+                <!-- Attrition Score -->
+
+                        {% if not each.attritionprediction_set.all %}
+                              <div style="margin-top:-5px;">
+                                   .
+                              </div>
+
+                              <div class="description" style="text-align: right ">
+                                    <p style="margin-bottom: 0px"> Attrition Score:</p>
+                                    <p style="font-size:20px; font-weight: bold; ">None</p>
+                              </div>
+                </div>
+                              <div class="progress">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 0" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                    </div>
+                              </div>
+                          {% elif each.attritionprediction_set.all %}
+                                {% for ap in each.attritionprediction_set.all %}
+
+                                    <div style="margin-top:-5px;">
+                                        {{ ap.datetime|naturaltime }}
+                                    </div>
+
+                                    <div class="description" style="text-align: right ">
+                                        <p style="margin-bottom: 0px"> Attrition Score:</p>
+                                        <p style="font-size:20px; font-weight: bold; ">{{ ap.attrition_probability }}%</p>
+                                    </div>
+                </div>
+                                  <div class="progress">
+                                        {% if ap.attrition_probability >= 0 and ap.attrition_probability <= 40 %}
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ ap.attrition_probability }}%" aria-valuenow="{{ ap.attrition_probability }}" aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                        {% elif ap.attrition_probability > 40 and ap.attrition_probability <= 65  %}
+                                            <div class="progress-bar bg-info" role="progressbar" style="width: {{ ap.attrition_probability }}%" aria-valuenow="{{ ap.attrition_probability }}" aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                        {% elif ap.attrition_probability > 65 and ap.attrition_probability <= 85  %}
+                                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{ ap.attrition_probability }}%" aria-valuenow="{{ ap.attrition_probability }}" aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                        {% elif ap.attrition_probability > 85 and ap.attrition_probability <= 100  %}
+                                            <div class="progress-bar bg-danger" role="progressbar" style="width: {{ ap.attrition_probability }}%" aria-valuenow="{{ ap.attrition_probability }}" aria-valuemin="0" aria-valuemax="100">
+                                            </div>
+                                        {% endif %}
+                                  </div>
+                                {% endfor %}
+                          {% endif %}
+
+                   <!-- Buttons -->
+                            <div class="extra content">
+                              <div class="ui two buttons">
+                                <button type="button" class="ui basic green button" data-bs-toggle="modal" data-bs-target='#contract{{ each.id }}' data-bs-whatever="@mdo" style="border: none;background: none;">
+                                        Contract
+                                </button>
+                                {% if not each.tenantcontract_set.all %}
+                                    <button class="ui basic blue button" type="button" disabled>
+                                      Process
+                                    </button>
+                                {% elif each.tenantcontract_set.all %}
+                                    <form method="POST" enctype="multipart/form-data">
+                                          {% csrf_token %}
+
+                                        {% if not each.attritionprediction_set.all %}
+                                             <input type="hidden" name="form_type" value="churnprediction">
+                                             <input type="hidden" name="churn_tenant" value="{{ each.id }}">
+                                        {% elif each.attritionprediction_set.all %}
+                                            {% for atp in each.attritionprediction_set.all %}
+                                                 <input type="hidden" name="form_type" value="updatechurnprediction">
+                                                 <input type="hidden" name="churn_tenant" value="{{ each.id }}">
+                                                 <input type="hidden" name="churn_id" value="{{ atp.id }}">
+                                            {% endfor %}
+                                        {% endif %}
+
+                                         <button class="ui basic blue button" type="submit">
+                                            Process
+                                         </button>
+                                    </form>
+                                {% endif %}
+                              </div>
+                            </div>
+                          </div>
+
+                    <!-- MODAL -->
+                     <div class="modal fade" id="contract{{ each.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Attrition Profile</h5>
+                              </div>
+                              <div class="modal-body">
+
+                                {% if not each.tenantcontract_set.all %}
+                                    <form method="POST" enctype="multipart/form-data" class="needs-validation">
+                                          {% csrf_token %}
+                                          <div class="row g-3">
+
+                                               <input type="hidden" name="form_type" value="addcontract">
+
+                                               <div class="col-4">
+                                                  <label for="tenant" class="form-label">Tenant ID</label>
+                                                  <input type="text" class="form-control" id="tenant" name="tenant" value="{{ each.id }}" readonly>
+                                               </div>
+
+                                               <div class="col-4">
+                                                  <label for="name" class="form-label">Name</label>
+                                                  <input type="text" class="form-control" value="{{ each.account.first_name }} {{ each.account.last_name }}" readonly>
+                                               </div>
+
+                                               <div class="col-4">
+                                                  <label for="name" class="form-label">Unit</label>
+                                                  <input type="text" class="form-control" value="{{ each.unit.floor }}{{ each.unit.room }}" readonly>
+                                               </div>
+
+                                               <div class="col-6">
+                                                  <label for="move_date" class="form-label">Move in Date</label>
+                                                  <input type="date" class="form-control" id="move_date" name="move_date" required>
+                                               </div>
+
+                                               <div class="col-6">
+                                                  <label for="months_occupied" class="form-label">Total Months Occupied</label>
+                                                  <input type="number" min=0 class="form-control" id="months_occupied" name="months_occupied" readonly>
+                                               </div>
+
+                                               <div class="col-6">
+                                                  <label for="rent" class="form-label">Monthly Rent</label>
+                                                  <input type="number" step="0.01" min=0 class="form-control" id="rent" value="0" name="rent" required>
+                                               </div>
+
+                                               <div class="col-6">
+                                                  <label for="legal_rent" class="form-label">Legal Rent</label>
+                                                  <input type="number" step="0.01" min=0 class="form-control" id="legal_rent" name="legal_rent" required>
+                                               </div>
+
+                                               <div class="col-6">
+                                                  <label for="grace_period" class="form-label">Grace Period</label>
+                                                  <input type="number" min=0 class="form-control" id="grace_period" value="30" name="grace_period" required>
+                                               </div>
+
+                                               <div class="col-6">
+                                                  <label for="late_collection" class="form-label">Late Collection Fee (percentage)</label>
+                                                  <input type="number" min=0 class="form-control" id="late_collection" value="5" name="late_collection" required>
+                                               </div>
+
+                                               <div class="col-12">
+                                                  <label for="deposit" class="form-label">Deposit</label>
+                                                  <input type="number" step="0.01" min=0 class="form-control" id="deposit" name="deposit" required>
+                                               </div>
+
+                                              <div class="col-md-6">
+                                                  <label for="roommates" class="form-label">Does the tenant have Roommates?</label>
+                                                      <select class="form-select" id="roommates" name="roommates" style="background: #eee; pointer-events: none; touch-action: none;">
+                                                              {% if each.unit.tenant_num > 1 %}
+                                                                        <option value="1" selected >Yes</option>
+                                                                        <option value="0">No</option>
+                                                              {% elif each.unit.tenant_num == 1 %}
+                                                                        <option value="1" >Yes</option>
+                                                                        <option value="0" selected >No</option>
+                                                              {% endif %}
+                                                      </select>
+                                              </div>
+
+                                              <div class="col-md-6">
+                                                  <label for="epay" class="form-label">Does the tenant use electronic payments?</label>
+                                                      <select class="form-select" id="epay" name="epay" style="background: #eee; pointer-events: none; touch-action: none;">
+                                                                {% if each.proofofpayment_set.all %}
+                                                                     <option value="1" selected>Yes</option>
+                                                                     <option value="0">No</option>
+                                                                {% elif not each.proofofpayment_set.all %}
+                                                                     <option value="1" >Yes</option>
+                                                                     <option value="0" selected>No</option>
+                                                                {% endif %}
+                                                          </select>
+                                              </div>
+
+                                            <div class="modal-footer" style="margin-top:25px">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-primary">Submit</button>
+                                            </div>
+                                      </div>
+
+                                  </form>
+                                {% elif each.tenantcontract_set.all %}
+                                    {% for tc in each.tenantcontract_set.all %}
+                                          <form method="POST" enctype="multipart/form-data" class="needs-validation">
+                                              {% csrf_token %}
+                                              <div class="row g-3">
+
+                                                   <input type="hidden" name="form_type" value="updatecontract">
+                                                   <input type="hidden" name="id" value="{{ tc.id }}">
+
+                                                   <div class="col-4">
+                                                      <label for="tenant" class="form-label">Tenant ID</label>
+                                                      <input type="text" class="form-control" id="tenant" name="tenant" value="{{ each.id }}" readonly>
+                                                   </div>
+
+                                                   <div class="col-4">
+                                                      <label for="name" class="form-label">Name</label>
+                                                      <input type="text" class="form-control" value="{{ each.account.first_name }} {{ each.account.last_name }}" readonly>
+                                                   </div>
+
+                                                   <div class="col-4">
+                                                      <label for="name" class="form-label">Unit</label>
+                                                      <input type="text" class="form-control" value="{{ each.unit.floor }}{{ each.unit.room }}" readonly>
+                                                   </div>
+
+                                                   <div class="col-6">
+                                                      <label for="move_date" class="form-label">Move in Date</label>
+                                                      <input type="text" class="form-control" id="move_date" name="move_date" value="{{ tc.move_date }}" readonly>
+                                                   </div>
+
+                                                   <div class="col-6">
+                                                      <label for="months_occupied" class="form-label">Total Months Occupied</label>
+                                                      <input type="number" min=0 class="form-control" id="months_occupied" name="months_occupied" value="{{ tc.months_occupied }}" readonly>
+                                                   </div>
+
+                                                   <div class="col-6">
+                                                      <label for="rent" class="form-label">Monthly Rent</label>
+                                                      <input type="text" step="0.01" min=0 class="form-control" id="rent" name="rent" value="{{ tc.rent }}" required>
+                                                   </div>
+
+                                                   <div class="col-6">
+                                                      <label for="legal_rent" class="form-label">Legal Rent</label>
+                                                      <input type="text" step="0.01" min=0 class="form-control" id="legal_rent" name="legal_rent" value="{{ tc.legal_rent }}" required>
+                                                   </div>
+
+                                                   <div class="col-6">
+                                                      <label for="grace_period" class="form-label">Grace Period</label>
+                                                      <input type="number" min=0 class="form-control" id="grace_period" name="grace_period"  value="{{ tc.grace_period }}" required>
+                                                   </div>
+
+                                                   <div class="col-6">
+                                                      <label for="late_collection" class="form-label">Late Collection Fee (percentage)</label>
+                                                      <input type="text" min=0 class="form-control" id="late_collection" name="late_collection" value="{{ tc.late_collection }}" required>
+                                                   </div>
+
+                                                   <div class="col-12">
+                                                      <label for="deposit" class="form-label">Deposit</label>
+                                                      <input type="text" step="0.01" min=0 class="form-control" id="deposit" name="deposit" value="{{ tc.deposit }}" required>
+                                                   </div>
+
+                                                  <div class="col-md-6">
+                                                      <label for="roommates" class="form-label">Does the tenant have Roommates?</label>
+                                                          <select class="form-select" id="roommates" name="roommates" style="background: #eee; pointer-events: none; touch-action: none;">
+                                                              {% if each.unit.tenant_num > 1 %}
+                                                                        <option value="1" selected >Yes</option>
+                                                                        <option value="0">No</option>
+                                                              {% elif each.unit.tenant_num == 1 %}
+                                                                        <option value="1" >Yes</option>
+                                                                        <option value="0" selected >No</option>
+                                                              {% endif %}
+                                                          </select>
+                                                  </div>
+
+                                                  <div class="col-md-6">
+                                                      <label for="epay" class="form-label">Does the tenant use electronic payments?</label>
+                                                      <select class="form-select" id="epay" name="epay" style="background: #eee; pointer-events: none; touch-action: none;">
+                                                              {% if each.proofofpayment_set.all %}
+                                                                         <option value="1" selected>Yes</option>
+                                                                         <option value="0">No</option>
+                                                              {% elif not each.proofofpayment_set.all %}
+                                                                         <option value="1" >Yes</option>
+                                                                         <option value="0" selected>No</option>
+                                                              {% endif %}
+                                                      </select>
+                                                  </div>
+
+                                                <div class="modal-footer" style="margin-top:25px">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                                </div>
+                                          </div>
+
+                                      </form>
+                                {% endfor %}
+                            {% endif %}
+
+
+
+                        </div>
+                     </div>
+                </div>
+            </div>
+
+    {% endfor %}
+
+        </div>
+
+
+        <footer style="align-content: center; justify-content: center; display: flex; padding:80px 50px 35px 50px">
+              <div class="ui horizontal bulleted link list">
+                  <a class="item">
+                    AIJM Developers
+                  </a>
+                  <a class="item">
+                    Capstone
+                  </a>
+                  <a class="item">
+                    2021-2022
+                  </a>
+                </div>
+          </footer>
+
+  </body>
+
+        <script>
+              var loadFile = function(event) {
+                var output = document.getElementById('output');
+                output.src = URL.createObjectURL(event.target.files[0]);
+                output.onload = function() {
+                  URL.revokeObjectURL(output.src) // free memory
+                }
+              };
+
+              function calculate(e){
+                    if(e.target.value === '0'){
+                    }
+                    else{
+                      var num1 = document.getElementById('rent').value();
+                      var num2 = '0.05';
+                      var tot = parseFloat(num1) * parseFloat(num2);
+
+                      document.getElementById('late_collection').value = tot.toFixed(2);
+                    }
+              }
+              </script>
+</html>
+
