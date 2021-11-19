@@ -461,6 +461,7 @@ class BillingTypeList(ExportActionMixin, admin.ModelAdmin):
 class BillingList(ExportActionMixin, admin.ModelAdmin):
     list_display = ('get_unit', 'get_dateissued', 'get_name', 'get_billingname', 'get_billingfee', 'get_duedate', 'status', 'get_isactive',)
     list_filter = ('status','date_issued','due_date')
+    search_fields = ['tenant__account__first_name','tenant__account__last_name']
     actions = [make_paid]
     resource_class = BillingResource
 
@@ -547,6 +548,7 @@ class ProofList(ExportActionMixin, admin.ModelAdmin):
     get_isactive.boolean = 'isactive'
 
     exclude = ('isactive',)
+    form = ProofForm
 
 
 class TncList(ExportActionMixin, admin.ModelAdmin):
@@ -607,6 +609,8 @@ class NewsList(ExportActionMixin, admin.ModelAdmin):
     get_date.short_description = 'Unit'
     get_isactive.short_description = 'Active'
     get_isactive.boolean = 'isactive'
+
+    exclude = ('isactive',)
 
 
 class VisitorList(ExportActionMixin, admin.ModelAdmin):

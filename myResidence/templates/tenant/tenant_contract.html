@@ -1,0 +1,187 @@
+
+{% load static %}
+{% load humanize %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{% static '/logo/myResidence_tab.png'%}">
+    <title>Lease Contract</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static '/css/bootstrap.min.css'%}" rel="stylesheet">
+
+    <style>
+        .contract-info{
+            background-color: #ffffff;
+        }
+
+        input{
+          background-color: #fcfcfc;
+          border: 0;
+          border-bottom: 2px solid lightgrey;
+        }
+
+        .contract-info p{
+            font-family: "Times New Roman";
+        }
+
+        .contract-info h4{
+            font-size: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .contract-info p{text-align:justify}
+    </style>
+
+
+    <!-- Custom styles for this template -->
+    <link href="{% static '/custom/alert.css' %}" rel="stylesheet">
+    <script src="{% static '/custom/alert.js' %}"></script>
+    <link href="{% static '/custom/blog.css'%}" rel="stylesheet">
+    <link href="{% static '/custom/alert2.css' %}" rel="stylesheet">
+
+       <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+       <link rel="stylesheet" type="text/css" href="https://printjs-4de6.kxcdn.com/print.min.css">
+  </head>
+  <body id='contract-whole'>
+
+                               {% for each in contract %}
+                                   <form method="POST" enctype="multipart/form-data" class="needs-validation" style="padding:50px" >
+                                            <div class="contract-info" id="html-content" style="padding:10px 20px 20px 20px">
+                                                    {% csrf_token %}
+                                                               <input type="hidden" name="id" value="{{ request.user.tenant.id }}">
+
+                                                  <h4 style="margin-bottom: 50px">LEASE CONTRACT</h4>
+                                                  <p style="margin-bottom: 5px">
+                                                      <strong>KNOW ALL MEN BY THESE PRESENTS:</strong>
+                                                  </p>
+                                                  <p>
+                                                      This CONTRACT OF LEASE is made and executed at the City of <input type="text" style="margin: 5px; width: 80px" value="" required >, this day of <input type="text" style="margin: 5px; width: 50px" value="" required>, 20<input type="text" style="margin: 5px; width: 30px" value="" required>, by and between:
+                                                  </p>
+                                                  <p style="text-align: center;margin-top:-10px;">
+                                                      <br><input type="text" style="margin: 5px; width: 200px" value="" placeholder="Name of Lessor" required>, of legal age, single/married to <input type="text" style="margin: 5px; width: 200px" value="" placeholder="Name of spouse if any" required>,   Filipino, and with residence and postal address at <input type="text" style="margin: 5px; width: 250px" value="" placeholder="Address">, hereinafter referred to as the <strong>LESSOR</strong>.
+                                                  </p>
+
+                                                  <h4 style="">-AND-</h4>
+                                                  <p style="text-align: center;">
+                                                        <input type="text" style="margin: 5px; width: 200px" value="" id="lessee1" onkeyup="selectChange(event)" placeholder="Name of Lessee" required>, Filipino and with residence and postal address at <input type="text" style="margin: 5px; width: 250px" value="" placeholder="Address" required>, hereinafter referred to as the <strong>LESSEE</strong>.
+                                                        <br><br>
+                                                  </p>
+
+                                                  <h4>WITNESSETH; That</h4>
+                                                  <p>
+                                                      <br><strong>WHEREAS</strong>, the <strong>LESSOR</strong> is the owner of THE LEASED PREMISES, a residential property situated at <input type="text" style="margin: 5px; width: 350px" value="" placeholder="Address of property to be leased" required>;
+                                                                <br><br><strong>WHEREAS</strong>, the <strong>LESSOR</strong> agrees to lease-out the property to the LESSEE and the LESSEE is willing to lease the same;
+                                                                <br><br><strong>NOW THEREFORE</strong> , for and in consideration of the foregoing premises, the LESSOR leases unto the LESSEE and the LESSEE hereby accepts from the LESSOR the LEASED premises, subject to the following:
+                                                                <br><br>
+                                                  </p>
+
+                                                  <h4>TERMS AND CONDITIONS</h4>
+                                                  <p>
+                                                        <br><strong>1. PURPOSES:</strong>  That premises hereby leased shall be used exclusively by the LESSEE for residential purposes only and shall not be diverted to other uses. It is hereby expressly agreed that if at any time the premises are used for other purposes, the LESSOR shall have the right to rescind this contract without prejudice to its other rights under the law.
+                                                                <br><br><strong>2. TERM:</strong>   This term of lease is for ONE (1) YEAR. from (Date) to (Date) inclusive. Upon its expiration, this lease may be renewed under such terms and conditions as my be mutually agreed upon by both parties,  written notice of intention to renew the lease shall be served to the LESSOR not later than seven (7) days prior to the expiry date of the period herein agreed upon.
+                                                                <br><br><strong>3. RENTAL RATE:</strong>    The monthly rental rate for the leased premises shall be in PESOS: AMOUNT IN WORDS (P 00,000.00), Philippine Currency. All rental payments shall be payable to the LESSOR.
+                                                                <br><br><strong>4. DEPOSIT:</strong>    That the LESSEE shall deposit to the LESSOR upon signing of this contract and prior to move-in an amount equivalent to the rent for THREE (3) MONTHS or the sum of  PESOS: AMOUNT IN WORDS (P 00,000.00), Philippine Currency.  wherein the two (2) months deposit shall be applied as rent for the 11th and 12th months and the remaining one (1) month deposit shall answer partially for damages and any other obligations, for utilities such as Water, Electricity, CATV, Telephone, Association Dues or resulting from violation(s) of any of the provision of this contract.
+                                                                <br><br><strong>5. DEFAULT PAYMENT:</strong>   In case of default by the LESSEE in the payment of the rent, such as when the checks are dishonored, the LESSOR at its option may terminate this contract and eject the LESSEE. The LESSOR has the right to padlock the premises when the LESSEE is in default of payment for One (1) month and may forfeit whatever rental deposit or advances have been given by the LESSEE.
+                                                                <br><br><strong>6. SUB-LEASE:</strong>    The LESSEE shall not directly or indirectly sublet, allow or permit the leased premises to be occupied in whole or in part by any person, form or corporation, neither shall the LESSEE assign its rights hereunder to any other person or entity and no right of interest thereto or therein shall be conferred on or vested in anyone by the LESSEE without the LESSOR'S written approval.
+                                                                <br><br><strong>7. PUBLIC UTILITIES:</strong>    The LESSEE shall pay for its telephone, electric, cable TV, water, Internet, association dues and other public services and utilities during the duration of the lease.
+                                                                <br><br><strong>8. FORCE MAJEURE:</strong>    If whole or any part of the leased premises shall be destroyed or damaged by fire, flood, lightning, typhoon, earthquake, storm, riot or any other unforeseen disabling cause of acts of God, as to render the leased premises during the term substantially unfit for use and occupation of the LESSEE, then this lease contract may be terminated without compensation by the LESSOR or by the LESSEE by notice in writing to the other.
+                                                                <br><br><strong>9. LESSOR'S RIGHT OF ENTRY:</strong>    The LESSOR or its authorized agent shall after giving due notice to the LESSEE shall have the right to enter the premises in the presence of the LESSEE or its representative at any reasonable hour to examine the same or make repairs therein or for the operation and maintenance of the building or to exhibit the leased premises to prospective LESSEE, or for any other lawful purposes which it may deem necessary.
+                                                                <br><br><strong>10. EXPIRATION OF LEASE:</strong>    At the expiration of the term of this lease or cancellation thereof, as herein provided, the LESSEE will promptly deliver to the LESSOR the leased premises with all corresponding keys and in as good and tenable condition as the same is now, ordinary wear and tear expected devoid of all occupants, movable furniture, articles and effects of any kind. Non-compliance with the terms of this clause by the LESSEE will give the LESSOR the right, at the latter's option, to refuse to accept the delivery of the premises and compel the LESSEE to pay rent therefrom at the same rate plus Twenty Five (25) % thereof as penalty until the LESSEE shall have complied with the terms hereof.  The same penalty shall be imposed in case the LESSEE fails to leave the premises after the expiration of this Contract of Lease or termination for any reason whatsoever.
+                                                                <br><br><strong>11. JUDICIAL RELIEF:</strong>    Should any one of the parties herein be compelled to seek judicial relief against the other, the losing party shall pay an amount of One Hundred (100) % of the amount clamed in the complaint as attorney's fees which shall in no case be less than P50,000.00 pesos in addition to other cost and damages which the said party may be entitled to under the law.
+                                                                <br><br>12. This <strong>CONTRACT OF LEASE:</strong>  shall be valid and binding between the parties, their successors-in-interest and assigns.
+                                                                <br><br><strong>IN WITNESS WHEREOF</strong> ,  parties herein affixed their signatures on the date and place above written.
+                                                  </p>
+
+                                                  <p style="text-align: center">
+                                                      <br><input type="text" style="margin: 5px; width: 200px" value="" placeholder="Name of Lessor" required>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" style="margin: 5px; width: 200px" value="" placeholder="Name of Lessee" id="lessee2" required>
+                                                      <br>LESSOR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LESSEE
+                                                      <br>
+                                                      <br>Signed in the presence of:
+                                                      <br>
+                                                      <br>_____________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;______________________________
+                                                      <br>
+                                                  </p>
+
+                                                  <h4 style="margin-top: 40px">ACKNOWLEDGEMENT</h4>
+                                                  <p>
+                                                      <br>Republic of the Philippines)
+                                                      <br>_________________________) S.S
+                                                      <br>BEFORE ME, personally appeared:
+                                                      <br>
+                                                  </p>
+
+                                                  <p style="text-align: center">
+                                                      Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CTC Number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date/Place Issued
+                                                      <br>
+                                                      <br><input type="text" style="margin: 5px; width: 200px" value="" placeholder="Name of Lessor" required> 10000000 <input type="text" style="margin: 5px; width: 100px" value="" required> / <input type="text" style="margin: 5px; width: 100px" value="" required>
+                                                      <br><input type="text" style="margin: 5px; width: 200px" value="" placeholder="Name of Lessee"  id="lessee3"  required> 10000000 <input type="text"style="margin: 5px; width: 100px" value="" required> / <input type="text" style="margin: 5px; width: 100px" value="" required>
+                                                      <br>
+                                                  </p>
+
+                                                  <p>
+                                                      <br>Known to me and to me known to be the same persons who executed the foregoing instrument and acknowledged to me that the same is their free and voluntary act and deed.
+                                                      <br>
+                                                      <br>This instrument consisting of <input type="text" style="margin: 5px; width: 50px" value="" required> page/s, including the page on which this acknowledgement is written, has been signed on each and every page thereof by the concerned parties and their witnesses, and and sealed with my notarial seal.
+                                                      <br>
+                                                      <br>WITNESS MY HAND AND SEAL, on the date and place first above written.
+                                                      <br>
+                                                  </p>
+
+                                                  <p style="text-align: right">
+                                                      <br>Notary Public
+                                                      <br>
+                                                  </p>
+
+                                                  <p>
+                                                      <br>Doc. No.<input type="text" style="margin: 5px; width: 50px" value="" >;
+                                                      <br>Page No.<input type="text" style="margin: 5px; width: 50px" value="" >;
+                                                      <br>Book No.<input type="text" style="margin: 5px; width: 50px" value="" >;
+                                                      <br>Series of 20<input type="text" style="margin: 5px; width: 50px" value="" >.
+                                                      <br>
+                                                  </p>
+                                           {% endfor %}
+                                      </div>
+
+
+                                          <div class="modal-footer" style="margin-top:25px; padding:50px">
+                                                                <a style="text-decoration: none; margin-right:10px" href="{% url 'home' %}"><button type="button" class="btn btn-secondary">Back</button></a>
+                                                                <button type="submit" class="btn btn-warning" id="cmd"
+                                                                        onclick="printJS(
+                                                                            {
+                                                                                printable: 'html-content',
+                                                                                type:'html',
+                                                                                documentTitle: 'Lease Contract',
+                                                                                onPrintDialogClose: 'Success',
+                                                                                style:' .contract-info{background-color: #ffffff;}input{text-align:center;background-color: #fcfcfc; border:0; border-bottom:2px solid lightgrey;}.contract-info input{font-size:15px;font-family: Times New Roman;}.contract-info h4{font-size: 20px;text-align: center;font-weight: bold;}.contract-info p{text-align:justify}'
+                                                                            })">
+                                                                    Generate PDF
+                                                                </button>
+                                          </div>
+
+                                   </form>
+    <script>
+        $(document).ready(function() {
+            $(".toast").toast('show');
+        });
+
+        function CreatePDFfromHTML() {
+            alert("WIP (Prints contract as PDF)");
+        }
+
+        function selectChange(e) {
+          document.getElementById("lessee2").value = e.value;
+          document.getElementById("lessee3").value = e.value;
+        }
+    </script>
+
+    <script src="{% static '/js/bootstrap.bundle.min.js'%}"></script>
+    <script src="{% static '/js/utils.js'%}"></script>
+    <script src="{% static '/custom/sidebars.js'%}"></script>
+    <script src="{% static '/custom/form-validation.js'%} "></script>
+  </body>
+</html>

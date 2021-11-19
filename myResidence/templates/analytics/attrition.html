@@ -64,6 +64,147 @@
                 <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
                     {{message}}
                 </div>
+
+                    {% elif 'all_attrition' in message.extra_tags %}
+                        <script>
+                            $("#allsuccess").modal('show');
+                        </script>
+
+                             <div class="modal fade" id="allsuccess" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                    <div class="modal-content" >
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel" style="font-size:20px;">Tenants Attrition Probability Report</h5>
+                                      </div>
+                                      <div class="modal-body">
+                                                <div class="mb-3" >
+
+                                                    <div class="ui list">
+
+                                                      <a class="item" style="margin-top:10px;margin-left:20px">
+                                                        <i class="spinner icon"></i>
+                                                        <div class="content">
+                                                          <div class="header">{{ nocont_tot }}</div>
+                                                          <div class="description">Number of tenants with no contracts yet</div>
+                                                        </div>
+                                                      </a>
+
+                                                      <a class="item" style="margin-top:10px; margin-left:20px">
+                                                        <i class="thumbs up outline icon"></i>
+                                                        <div class="content">
+                                                          <div class="header">{{ scoreavg|floatformat:1 }}</div>
+                                                          <div class="description">Average attrition probability score of all tenants</div>
+                                                        </div>
+                                                      </a>
+
+                                                      <a class="item" style="margin-top:10px; margin-left:20px">
+                                                        <i class="exclamation triangle icon"></i>
+                                                        <div class="content">
+                                                          <div class="header">{{ hightot }}</div>
+                                                          <div class="description">Number of Tenants with 65 and above attrition probabilty score.<br>Namely:</div>
+                                                        </div>
+                                                      </a>
+
+                                                      <a class="item" style="margin-top:20px; display: flex; justify-content: center">
+                                                          <div class="ui horizontal list">
+                                                              {% for each in tenants_attr%}
+                                                                  <div class="item">
+                                                                    <img class="ui avatar image" src="{{ each.tenant.image.url }}">
+                                                                    <div class="content">
+                                                                      <div class="header">{{ each.tenant.account.first_name }} {{ each.tenant.account.last_name }}</div>
+                                                                      {{ each.attrition_probability }}
+                                                                    </div>
+                                                                  </div>
+                                                              {% endfor %}
+                                                          </div>
+                                                      </a>
+
+                                                </div>
+
+                                                <div class="modal-footer" style="margin-top:25px">
+                                                     <button type="button" class="btn btn-warning">Send Notices</button>
+                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                                                </div>
+
+                                      </div>
+                                    </div>
+                                  </div>
+                                  </div>
+                             </div>
+
+                    {% elif 'one_attrition' in message.extra_tags %}
+                        <script>
+                            $("#onesuccess").modal('show');
+                        </script>
+
+                             <div class="modal fade" id="onesuccess" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                    <div class="modal-content" >
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel" style="font-size:20px;">Tenants Attrition Probability Report</h5>
+                                      </div>
+                                      <div class="modal-body">
+                                                <div class="mb-3" >
+
+                                                    <div class="ui list">
+
+                                                      <a class="item" style="margin-top:10px;margin-left:20px">
+                                                        <i class="clipboard icon"></i>
+                                                        <div class="content" >
+                                                            {% if ct_score >= 0 and ct_score <= 49 %}
+                                                                <div class="header" style="font-size: 18px; margin-bottom: 5px; color: #217b48">{{ ct_score|floatformat:1 }}%</div>
+                                                            {% elif ct_score >= 50 and ct_score <= 59 %}
+                                                                <div class="header" style="font-size: 18px; margin-bottom: 5px; color: #1bcfe0">{{ ct_score|floatformat:1 }}%</div>
+                                                            {% elif ct_score >= 60 and ct_score <= 80 %}
+                                                                <div class="header" style="font-size: 18px; margin-bottom: 5px; color: #d2a028">{{ ct_score|floatformat:1 }}%</div>
+                                                            {% elif ct_score >= 81 and ct_score <= 100 %}
+                                                                <div class="header" style="font-size: 18px; margin-bottom: 5px; color: #c92626">{{ ct_score|floatformat:1 }}%</div>
+                                                            {% endif %}
+                                                              <div class="description">Tenant Probability</div>
+                                                        </div>
+                                                      </a>
+
+                                                      <a class="item" style="margin-top:10px; margin-left:20px">
+                                                        <i class="exclamation triangle icon"></i>
+                                                        <div class="content">
+                                                          <div class="header" style="font-size: 18px; margin-bottom: 5px">{{ ct_overdues }}</div>
+                                                          <div class="description">Number of Overdue Billings</div>
+                                                        </div>
+                                                      </a>
+
+                                                      <a class="item" style="margin-top:10px; margin-left:20px">
+                                                        <i class="bullhorn icon"></i>
+                                                        <div class="content">
+                                                          <div class="header" style="font-size: 18px; margin-bottom: 5px">{{ ct_report }}</div>
+                                                          <div class="description">Number of Reports Submitted</div>
+                                                        </div>
+                                                      </a>
+
+                                                      <a class="item" style="margin-top:20px; display: flex; justify-content: center">
+                                                          <div class="content">
+                                                             <div class="description">
+                                                                 Note: {{ ct_name }}'s number of overdue billings and reports submitted affects the actual attrition probability.<br>
+                                                                 {% if ct_overdues == 0 and ct_report == 0 %}
+
+                                                                 {% else %}
+                                                                         <p class="description" style="margin-top:5px; text-align: center; font-size: 17px; color:#3d86e5"><strong>Actual Tenant Attrition Probability is expected to be higher</strong></p>
+                                                                 {% endif %}
+                                                             </div>
+                                                          </div>
+                                                      </a>
+
+                                                </div>
+
+                                                <div class="modal-footer" style="margin-top:25px">
+                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                                                </div>
+
+                                      </div>
+                                    </div>
+                                  </div>
+                                  </div>
+                             </div>
+
             {% endif %}
         {% endfor %}
 
@@ -105,7 +246,7 @@
                                   <i class="spinner icon"></i> {{ noattrit_tot }}
                                 </div>
                                 <div class="label" style="margin-top:10px">
-                                  No Attrition Score
+                                  No Attrition Probability
                                 </div>
                                 <div class="meta" style="text-align: center">
                                   Number of Tenants
@@ -122,7 +263,7 @@
                                    Outdated
                                 </div>
                                 <div class="meta" style="text-align: center">
-                                    Attrition Score
+                                    Attrition Probability
                                 </div>
                             </div>
                           </div>
@@ -133,10 +274,10 @@
                                     <i class="thumbs up outline icon"></i> {{ scoreavg|floatformat:1 }}
                                 </div>
                                 <div class="label" style="margin-top:10px">
-                                    Average Score
+                                    Average
                                 </div>
                                 <div class="meta" style="text-align: center">
-                                    Attrition Percentage
+                                    Attrition Probability
                                 </div>
                             </div>
                           </div>
@@ -147,17 +288,17 @@
                                   <i class="exclamation triangle icon"></i> {{ hightot }}
                                 </div>
                                 <div class="label" style="margin-top:10px">
-                                  65 Score and Above
+                                  High Attrition Probability
                                 </div>
                                 <div class="meta" style="text-align: center">
-                                  High Probability
+                                  60 and Above
                                 </div>
                             </div>
                           </div>
 
         </div>
 
-        <div class="content ui segment" style="border:none; box-shadow: none; justify-content: center; align-content: center; display: flex">
+        <!--div class="content ui segment" style="border:none; box-shadow: none; justify-content: center; align-content: center; display: flex">
                     <div class="card" style="width: 80%">
                             <div class="content ui segment" style="padding:20px;">
                                 <div class="ui two column very relaxed grid">
@@ -222,7 +363,7 @@
                             </a>
 
                           </div>
-        </div>
+        </div-->
 
         <div class="ui large horizontal divided list divider" style="align-content: center; justify-content: center; display: flex; margin-top: 50px">
 
@@ -270,6 +411,40 @@
                    </div>
               </div>
 
+        </div>
+
+        <div style="justify-content: right; display: flex; margin-right:80px">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target='#confirm' data-bs-whatever="@mdo">
+                Process All
+            </button>
+
+                        <div class="modal fade" id="confirm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                <div class="modal-content" >
+                                  <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel" style="font-size:20px;">Confirmation</h5>
+                                  </div>
+                                  <div class="modal-body">
+                                            <div class="mb-3" >
+                                                <label for="image" class="form-label" style="font-size:15px;margin-top: 15px;margin-left: 10px">This will process attrition score for all tenants excluding those without contacts yet.</label>
+                                            </div>
+                                            <form method="POST" enctype="multipart/form-data" class="needs-validation">
+                                                      {% csrf_token %}
+                                                      <div class="row g-3">
+
+                                                           <input type="hidden" name="form_type" value="confirm">
+
+                                                        <div class="modal-footer" style="margin-top:25px">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                                                            <button type="submit" class="btn btn-primary">Continue</button>
+                                                        </div>
+                                                  </div>
+
+                                              </form>
+                                  </div>
+                                </div>
+                              </div>
+                        </div>
         </div>
 
         <div class="ui cards" style="justify-content: center; align-content: center; display: flex; margin-top:50px">
@@ -340,16 +515,16 @@
                                     </div>
                 </div>
                                   <div class="progress">
-                                        {% if ap.attrition_probability >= 0 and ap.attrition_probability <= 40 %}
+                                        {% if ap.attrition_probability >= 0 and ap.attrition_probability <= 49 %}
                                             <div class="progress-bar bg-success" role="progressbar" style="width: {{ ap.attrition_probability }}%" aria-valuenow="{{ ap.attrition_probability }}" aria-valuemin="0" aria-valuemax="100">
                                             </div>
-                                        {% elif ap.attrition_probability > 40 and ap.attrition_probability <= 65  %}
+                                        {% elif ap.attrition_probability >= 50 and ap.attrition_probability <= 59  %}
                                             <div class="progress-bar bg-info" role="progressbar" style="width: {{ ap.attrition_probability }}%" aria-valuenow="{{ ap.attrition_probability }}" aria-valuemin="0" aria-valuemax="100">
                                             </div>
-                                        {% elif ap.attrition_probability > 65 and ap.attrition_probability <= 85  %}
+                                        {% elif ap.attrition_probability >= 60 and ap.attrition_probability <= 80  %}
                                             <div class="progress-bar bg-warning" role="progressbar" style="width: {{ ap.attrition_probability }}%" aria-valuenow="{{ ap.attrition_probability }}" aria-valuemin="0" aria-valuemax="100">
                                             </div>
-                                        {% elif ap.attrition_probability > 85 and ap.attrition_probability <= 100  %}
+                                        {% elif ap.attrition_probability >= 81 and ap.attrition_probability <= 100  %}
                                             <div class="progress-bar bg-danger" role="progressbar" style="width: {{ ap.attrition_probability }}%" aria-valuenow="{{ ap.attrition_probability }}" aria-valuemin="0" aria-valuemax="100">
                                             </div>
                                         {% endif %}
@@ -596,7 +771,6 @@
 
         </div>
 
-
         <footer style="align-content: center; justify-content: center; display: flex; padding:80px 50px 35px 50px">
               <div class="ui horizontal bulleted link list">
                   <a class="item">
@@ -614,6 +788,14 @@
   </body>
 
         <script>
+            $(document).ready(function(){
+                $("#allsuccess").modal('show');
+            });
+
+            $(document).ready(function(){
+                $("#onesuccess").modal('show');
+            });
+
               var loadFile = function(event) {
                 var output = document.getElementById('output');
                 output.src = URL.createObjectURL(event.target.files[0]);

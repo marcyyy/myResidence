@@ -79,6 +79,8 @@
     <script src="{% static '/custom/alert.js' %}"></script>
     <link href="{% static '/custom/blog.css'%}" rel="stylesheet">
     <link href="{% static '/custom/alert2.css' %}" rel="stylesheet">
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
   </head>
   <body>
 
@@ -144,82 +146,9 @@
                                     <h5 class="modal-title" id="exampleModalLabel">Contract Agreement</h5>
                                   </div>
                                   <div class="modal-body">
-                                       {% for each in contract %}
-                                            <form method="POST" enctype="multipart/form-data" class="needs-validation">
-                                                      {% csrf_token %}
-                                                      <div class="row g-3">
 
-                                                           <input type="hidden" name="form_type" value="con_contract">
-                                                           <input type="hidden" name="id" value="{{ request.user.tenant.id }}">
 
-                                                           <div class="col-4">
-                                                              <label for="tenant" class="form-label">Tenant ID</label>
-                                                              <input type="text" class="form-control" id="tenant" name="tenant" value="{{ request.user.tenant.id }}" readonly>
-                                                           </div>
 
-                                                           <div class="col-4">
-                                                              <label for="name" class="form-label">Name</label>
-                                                              <input type="text" class="form-control" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly>
-                                                           </div>
-
-                                                           <div class="col-4">
-                                                              <label for="name" class="form-label">Unit</label>
-                                                              <input type="text" class="form-control" value="{{ request.user.tenant.unit.floor }}{{ request.user.tenant.unit.room }}" readonly>
-                                                           </div>
-
-                                                           <div class="col-4">
-                                                              <label for="move_date" class="form-label">Move in Date</label>
-                                                              <input type="text" class="form-control" id="move_date" name="move_date" value="{{ each.move_date }}" readonly>
-                                                           </div>
-
-                                                           <div class="col-4">
-                                                              <label for="rent" class="form-label">Monthly Rent</label>
-                                                              <input type="text" step="0.01" min=0 class="form-control" id="rent" name="rent" value="{{ each.rent }}" readonly>
-                                                           </div>
-
-                                                           <div class="col-4">
-                                                              <label for="legal_rent" class="form-label">Legal Rent</label>
-                                                              <input type="text" step="0.01" min=0 class="form-control" id="legal_rent" name="legal_rent" value="{{ each.legal_rent }}" readonly>
-                                                           </div>
-
-                                                           <div class="col-6">
-                                                              <label for="grace_period" class="form-label">Grace Period</label>
-                                                              <input type="number" min=0 class="form-control" id="grace_period" name="grace_period"  value="{{ each.grace_period }}" readonly>
-                                                           </div>
-
-                                                           <div class="col-6">
-                                                              <label for="late_collection" class="form-label">Late Collection Fee (percentage)</label>
-                                                              <input type="text" class="form-control" id="late_collection" name="late_collection" value="{{ each.late_collection }}" readonly>
-                                                           </div>
-
-                                                           <div class="col-12">
-                                                              <label for="deposit" class="form-label">Deposit</label>
-                                                              <input type="text" step="0.01" min=0 class="form-control" id="deposit" name="deposit" value="{{ each.deposit }}" readonly>
-                                                           </div>
-
-                                                          <div class="col-12" style="padding-left:30px; padding-top: 20px">
-                                                              <div class="form-check">
-                                                                  <input class="form-check-input" type="radio" name="confirmation" value="Yes" id="flexCheckDefault">
-                                                                  <label class="form-check-label" for="flexCheckDefault">
-                                                                    I confirm my agreement to this contract
-                                                                  </label>
-                                                              </div>
-                                                              <div class="form-check">
-                                                                  <input class="form-check-input" type="radio" name="confirmation" value="No" id="flexCheckDefault">
-                                                                  <label class="form-check-label" for="flexCheckDefault">
-                                                                    I do not confirm my agreement to this contract
-                                                                  </label>
-                                                              </div>
-                                                          </div>
-
-                                                        <div class="modal-footer" style="margin-top:25px">
-                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                                        </div>
-                                                  </div>
-
-                                              </form>
-                                       {% endfor %}
                                   </div>
                                 </div>
                               </div>
@@ -260,12 +189,12 @@
           </div>
 
                   <div class="modal fade" id="opencontract" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                      <div class="modal-dialog modal-dialog-scrollable modal-xl">
                         <div class="modal-content" >
                           <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Contract Agreement</h5>
                           </div>
-                          <div class="modal-body">
+                          <div class="modal-body contract-info" id="html-content" style="padding:40px">
                                {% for each in contract %}
                                     <form method="POST" enctype="multipart/form-data" class="needs-validation">
                                               {% csrf_token %}
@@ -478,10 +407,18 @@
 
 </main>
 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+
+
     <script>
         $(document).ready(function() {
             $(".toast").toast('show');
         });
+
+        function CreatePDFfromHTML() {
+            alert("WIP (Prints contract as PDF)");
+        }
     </script>
 
     <script src="{% static '/js/bootstrap.bundle.min.js'%}"></script>

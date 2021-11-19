@@ -99,7 +99,7 @@ class BillingForm(forms.ModelForm):
     class Meta:
         model = Billing
         fields = '__all__'
-        exclude = ('status', 'isactive', 'date_issued',)
+        exclude = ('status', 'isactive', 'date_issued', 'is_late')
 
 
 class ProofForm(forms.ModelForm):

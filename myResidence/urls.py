@@ -20,6 +20,7 @@ urlpatterns = [
     path('tenant/report_tickets', views.report_tickets, name='report_tickets'),
     path('tenant/settings', views.settings, name='settings'),
     path('tenant/visitor', views.visitor, name='visitor'),
+    path('tenant/contract', views.contract, name='contract'),
     path('tenant/visitor_history', views.visitor_history, name='visitor_history'),
     url('admin/myResidence/admin/(?P<pk>\d+)/change', views.admin_change, name='admin_change'),
     path('analytics/report', views.report, name='report'),

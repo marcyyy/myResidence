@@ -255,6 +255,7 @@ class Billing(models.Model):
         ('True', 'True'),
         ('', 'False'),
     )
+    is_late = models.CharField(max_length=100)
     isactive = models.CharField(db_column='isActive', max_length=100, null=True, blank=True, choices=ACTIVE,
                                 default=ACTIVE[0][0])  # Field name made lowercase.
 

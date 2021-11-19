@@ -69,6 +69,7 @@ def tenantregister(request):
 def register(request):
     tncontent = TermsAndCondition.objects.get(pk=1)
     regform = TenantRegistrationForm(initial={'status': 'Pending', 'date_joined': datetime.now(), 'isactive': 'True'})
+    todate = date.today()
 
     if request.method == 'POST':
         regform = TenantRegistrationForm(request.POST)
@@ -80,7 +81,7 @@ def register(request):
         else:
             return redirect('register')
 
-    context = {'form': regform, 'tncontent': tncontent}
+    context = {'form': regform, 'tncontent': tncontent, 'todate': todate}
     return render(request, 'tenant/tenant_register.html', context)
 
 
@@ -91,11 +92,33 @@ def loginpage(request):
     todate1 = todate.strftime("%Y-%m-%d")
     Billing.objects.filter(due_date__lte=todate, status='Pending').update(status='Overdue')
 
-    # billings overdue and grace period
-    # billings_ud = Billing.objects.all()
+    # visitor request overdue
+    Visitor.objects.filter(visit_date__lte=todate, status='Pending').update(status='Rejected', isactive='')
 
-    # for each in billings_ud:
-    #    pass
+    # repair request overdue
+    Repair.objects.filter(date_available__lte=todate, status='Pending').update(status='Date Unavailable')
+
+    # billings overdue and grace period
+    billings_ud = Billing.objects.all()
+
+    for each in billings_ud:
+        if each.is_late == "No" and each.status == "Overdue":
+            datepay = each.due_date
+            contract = TenantContract.objects.get(tenant=each.tenant)
+            b = abs(relativedelta(datepay, todate))
+
+            if b.days >= contract.grace_period:
+                latecollection = contract.late_collection
+                if latecollection <= 5:
+                    addpay = float(latecollection) * .01
+                    percentpay = float(each.billing_fee) * float(addpay)
+                    totalpay = float(each.billing_fee) + float(percentpay)
+                    Billing.objects.filter(id=each.id).update(is_late='Yes', billing_fee=totalpay)
+                else:
+                    totalpay = float(latecollection) + float(each.billing_fee)
+                    Billing.objects.filter(id=each.id).update(is_late='Yes', billing_fee=totalpay)
+        else:
+            pass
 
     # create rent billing
     last_month_filter = datetime.today() - timedelta(days=get_lapse())
@@ -113,7 +136,7 @@ def loginpage(request):
                 due_date = date.today() + relativedelta(months=+1)
                 due_date1 = due_date.strftime("%Y-%m-%d")
 
-                data = {'tenant': tenant, 'date_issued': todate1, 'billing_type': billing_type.id,
+                data = {'tenant': tenant, 'date_issued': todate1, 'billing_type': billing_type.id, 'is_late': 'No',
                         'billing_fee': billing_fee.rent, 'due_date': due_date1, 'status': 'Pending',
                         'is_active': 'True', }
                 form = BillingForm(data)
@@ -141,7 +164,7 @@ def loginpage(request):
                     due_date = date.today() + relativedelta(months=+1)
                     due_date1 = due_date.strftime("%Y-%m-%d")
 
-                    data = {'tenant': tenant, 'date_issued': todate1, 'billing_type': billing_type.id,
+                    data = {'tenant': tenant, 'date_issued': todate1, 'billing_type': billing_type.id, 'is_late': 'No',
                             'billing_fee': billing_fee, 'due_date': due_date1, 'status': 'Pending', 'is_active': 'True', }
                     form = BillingForm(data)
 
@@ -253,15 +276,23 @@ def home(request):
         elif request.POST.get("form_type") == 'con_contract' and request.POST.get("confirmation") == 'Yes':
             tenantid = request.POST.get('id')
             confirmation = request.POST.get('confirmation')
-            TenantContract.objects.filter(tenant=tenantid).update(confirmation=confirmation, )
+            # TenantContract.objects.filter(tenant=tenantid).update(confirmation=confirmation, )
             messages.success(request, "Your Contract has now been confirmed. Thank you for your time.")
-            return redirect('home')
+            return redirect('contract')
         elif request.POST.get("form_type") == 'con_contract' and request.POST.get("confirmation") == 'No':
             messages.warning(request, "Please visit our office with regards to your contract ")
             return redirect('home')
 
     context = {'announcement': announcement, 'news': news, 'notif': notif, 'notifctr': notifctr, 'notiflast': notiflast, 'contract':contract}
     return render(request, 'tenant/tenant_home.html', context)
+
+
+def contract(request):
+    tid = request.user.tenant.id
+    contract_info = TenantContract.objects.filter(tenant__id=tid, confirmation='None')
+
+    context = {'contract': contract_info}
+    return render(request, 'tenant/tenant_contract.html', context)
 
 
 def billings(request):
@@ -891,6 +922,11 @@ def report(request):
 
 
 def attrition(request):
+    ct_report = 0
+    ct_overdues = 0
+    ct_score = 0.00
+    ct_name = ""
+
     # reports
     tenantctr = Tenant.objects.all().count()
     if AttritionPrediction.objects.all():
@@ -898,6 +934,12 @@ def attrition(request):
     else:
         attritctr = 1
     noattrit_tot = tenantctr - attritctr
+
+    if TenantContract.objects.all():
+        contctr = TenantContract.objects.all().count()
+    else:
+        contctr = 1
+    nocont_tot = tenantctr - contctr
 
     last_month_filter = datetime.today() - timedelta(days=get_lapse())
     updatetot = AttritionPrediction.objects.filter(datetime__lte=last_month_filter).count()
@@ -907,10 +949,11 @@ def attrition(request):
         scores = scores + each.attrition_probability
     scoreavg = float(scores) / float(attritctr)
 
-    hightot = AttritionPrediction.objects.filter(attrition_probability__gte=65).count()
+    hightot = AttritionPrediction.objects.filter(attrition_probability__gte=60).count()
 
     # form
     tenants = Tenant.objects.all().order_by('unit__floor','unit__room')
+    tenants_attr = AttritionPrediction.objects.filter(attrition_probability__gte=60).order_by('-attrition_probability')
     contract = TenantContract.objects.all()
     attrit = AttritionPrediction.objects.all()
     form = ContractForm()
@@ -982,9 +1025,11 @@ def attrition(request):
         elif request.POST.get("form_type") == 'churnprediction':
             tenant = request.POST.get('churn_tenant')
             contract = TenantContract.objects.get(tenant=tenant)
-            rectr = Report.objects.filter(tenant=tenant).count()
-            blctr = Billing.objects.filter(tenant=tenant, status='Overdue').count()
-            retot = float(rectr) * 0.5
+            # rectr = Report.objects.filter(tenant=tenant).count()
+            # blctr = Billing.objects.filter(tenant=tenant, status='Overdue').count()
+            # retot = float(rectr) * 0.5
+            blctr = 0
+            retot = 0
 
             date_time = datetime.now()
 
@@ -1010,10 +1055,15 @@ def attrition(request):
             form = AttritionForm(data)
 
             print(form.errors)
+
             if form.is_valid():
+                ct_report = Report.objects.filter(tenant=tenant).count()
+                ct_overdues = Billing.objects.filter(tenant=tenant, status='Overdue').count()
+                ct_name = contract.tenant.account.first_name + " " + contract.tenant.account.last_name
+                ct_score = fattr
+
                 form.save()
-                messages.success(request, "Attrition Prediction Success.")
-                return redirect('attrition')
+                messages.info(request, "Attrition Prediction Success.", extra_tags='one_attrition')
             else:
                 messages.error(request, "Attrition Prediction Failed.")
                 return redirect('attrition')
@@ -1023,9 +1073,11 @@ def attrition(request):
             cid = request.POST.get('churn_id')
             tenant = request.POST.get('churn_tenant')
             contract = TenantContract.objects.get(tenant=tenant)
-            rectr = Report.objects.filter(tenant=tenant).count()
-            blctr = Billing.objects.filter(tenant=tenant, status='Overdue').count()
-            retot = float(rectr) * 0.5
+            # rectr = Report.objects.filter(tenant=tenant).count()
+            # blctr = Billing.objects.filter(tenant=tenant, status='Overdue').count()
+            # retot = float(rectr) * 0.5
+            blctr = 0
+            retot = 0
 
             var1 = contract.rent
             var2 = contract.late_collection
@@ -1047,10 +1099,65 @@ def attrition(request):
 
             date_time = datetime.now()
 
+            ct_report = Report.objects.filter(tenant=tenant).count()
+            ct_overdues = Billing.objects.filter(tenant=tenant, status='Overdue').count()
+            ct_name = contract.tenant.account.first_name + " " + contract.tenant.account.last_name
+            ct_score = fattr
             AttritionPrediction.objects.filter(id=cid).update(datetime=date_time, attrition_probability=fattr,)
-            messages.success(request, "Attrition Prediction Update Success.")
+            messages.info(request, "Attrition Prediction Update Success.", extra_tags='one_attrition')
+
+    # CHURN ALL
+        elif request.POST.get("form_type") == 'confirm':
+            tenantlist = TenantContract.objects.all()
+
+            for each in tenantlist:
+                tenant = each.tenant
+                cid = AttritionPrediction.objects.filter(tenant=tenant)
+                # rectr = Report.objects.filter(tenant=tenant).count()
+                # blctr = Billing.objects.filter(tenant=tenant, status='Overdue').count()
+                # retot = float(rectr) * 0.5
+                blctr = 0
+                retot = 0
+
+                var1 = each.rent
+                var2 = each.late_collection
+                var3 = each.grace_period
+                var4 = each.legal_rent
+                var5 = each.deposit
+                var6 = each.months_occupied
+                var7 = each.roommates
+                var8 = each.epay
+
+                predicts = [[var1, var2, var3, var4, var5, var6, var7, var8]]
+                data = pd.DataFrame(predicts)
+                predicts2 = model2.predict(data)
+
+                predicts3 = predicts2 * 100
+                finalna = predicts3.round(2)
+                lst_str = str(finalna)[1:-1]
+                fattr = float(lst_str) + float(blctr) + retot
+
+                date_time = datetime.now()
+
+                if cid:
+                    attrid = AttritionPrediction.objects.get(tenant=tenant)
+                    AttritionPrediction.objects.filter(id=attrid.id).update(datetime=date_time, attrition_probability=fattr, )
+                else:
+                    data = {'tenant': tenant, 'attrition_probability': fattr, 'is_active': 'True', }
+                    form = AttritionForm(data)
+
+                    print(form.errors)
+                    if form.is_valid():
+                        form.save()
+                        return redirect('attrition')
+                    else:
+                        return redirect('attrition')
+
+
+            messages.info(request, 'Attrition of all tenants successfully processed.', extra_tags='all_attrition')
             return redirect('attrition')
 
-    context = {'tenants': tenants, 'contract': contract, 'attrit': attrit, 'form': form,
-               'tenantctr': tenantctr, 'noattrit_tot': noattrit_tot, 'updatetot': updatetot, 'scoreavg': scoreavg,  'hightot': hightot, }
+    context = {'tenants': tenants, 'tenants_attr':tenants_attr, 'contract': contract, 'attrit': attrit, 'form': form, 'nocont_tot':nocont_tot,
+               'tenantctr': tenantctr, 'noattrit_tot': noattrit_tot, 'updatetot': updatetot, 'scoreavg': scoreavg,  'hightot': hightot,
+               'ct_report': ct_report, 'ct_overdues': ct_overdues, 'ct_name': ct_name, 'ct_score': ct_score,}
     return render(request, 'analytics/attrition.html', context)
