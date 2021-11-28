@@ -132,12 +132,12 @@ def loginpage(request):
             else:
                 tenant = each_t.id
                 billing_type = BillingType.objects.get(billing_name="Rent Bill")
-                billing_fee = TenantContract.objects.get(tenant__id=each_t.id)
+                billing_tenant = Billing.objects.get(tenant__id=each_t.id)
                 due_date = date.today() + relativedelta(months=+1)
                 due_date1 = due_date.strftime("%Y-%m-%d")
 
                 data = {'tenant': tenant, 'date_issued': todate1, 'billing_type': billing_type.id, 'is_late': 'No',
-                        'billing_fee': billing_fee.rent, 'due_date': due_date1, 'status': 'Pending',
+                        'billing_fee': billing_tenant.billing_fee, 'due_date': due_date1, 'status': 'Pending',
                         'is_active': 'True', }
                 form = BillingForm(data)
 
@@ -148,31 +148,31 @@ def loginpage(request):
                     messages.error(request, "Monthly Rent Billing save failed.")
 
         # create new rentbills
-        else:
-            contract = TenantContract.objects.filter(tenant__id=each_t.id)
-
+        # else:
+        #    contract = TenantContract.objects.filter(tenant__id=each_t.id)
+        #
             # must have contract first
-            if contract:
-                createrent = Billing.objects.filter(billing_type__billing_code="RB", tenant__id=each_t.id)
-                tc = TenantContract.objects.get(tenant__id=each_t.id)
-                d = tc.move_date
+        #    if contract:
+        #        createrent = Billing.objects.filter(billing_type__billing_code="RB", tenant__id=each_t.id)
+        #        tc = TenantContract.objects.get(tenant__id=each_t.id)
+        #        d = tc.move_date
+        #
+        #        if d.day == todate.day and not createrent:
+        #            tenant = each_t.id
+        #            billing_type = BillingType.objects.get(billing_name="Rent Bill")
+        #            billing_fee = tc.rent
+        #            due_date = date.today() + relativedelta(months=+1)
+        #            due_date1 = due_date.strftime("%Y-%m-%d")
 
-                if d.day == todate.day and not createrent:
-                    tenant = each_t.id
-                    billing_type = BillingType.objects.get(billing_name="Rent Bill")
-                    billing_fee = tc.rent
-                    due_date = date.today() + relativedelta(months=+1)
-                    due_date1 = due_date.strftime("%Y-%m-%d")
+        # data = {'tenant': tenant, 'date_issued': todate1, 'billing_type': billing_type.id, 'is_late': 'No',
+        # 'billing_fee': billing_fee, 'due_date': due_date1, 'status': 'Pending', 'is_active': 'True',
+        # } form = BillingForm(data)
 
-                    data = {'tenant': tenant, 'date_issued': todate1, 'billing_type': billing_type.id, 'is_late': 'No',
-                            'billing_fee': billing_fee, 'due_date': due_date1, 'status': 'Pending', 'is_active': 'True', }
-                    form = BillingForm(data)
-
-                    print(form.errors)
-                    if form.is_valid():
-                        form.save()
-                    else:
-                        messages.error(request, "New Rent Billing save failed.")
+        #            print(form.errors)
+        #            if form.is_valid():
+        #                form.save()
+        #            else:
+        #                messages.error(request, "New Rent Billing save failed.")
 
     # login form
     if request.method == 'POST':
