@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
+
+import DATABASES as DATABASES
 from django.conf.global_settings import LANGUAGES as DJANGO_LANGUAGES
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -82,6 +84,11 @@ WSGI_APPLICATION = 'TPS.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+
+import dj_database_url
+
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
 
 DATABASES = {
     'default': {
@@ -195,7 +202,7 @@ JAZZMIN_SETTINGS = {
     # Copyright on the footer
     "copyright": "AIJM Developers ",
 
-    "hide_models" : "myResidence.accountcustomization",
+    "hide_models": "myResidence.accountcustomization",
 
     "topmenu_links": [
         {"name": "Reports & Analytics", "url": "report"},
@@ -208,7 +215,7 @@ JAZZMIN_SETTINGS = {
         "myResidence.billing", "myResidence.billingtype", "myResidence.proofofpayment",
         "auth.user", "myResidence.admin", "myResidence.tenant", "myResidence.tenantregistration",
         "myResidence.tenantunit", "myResidence.termsandcondition", "myResidence.tenantannouncement",
-        "myResidence.announcementnew","myResidence.logtenant", "myResidence.logadmin"],
+        "myResidence.announcementnew", "myResidence.logtenant", "myResidence.logadmin"],
 
     "icons": {
         "admin.index": "fas fa-id-card",
