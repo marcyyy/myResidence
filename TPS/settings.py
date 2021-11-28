@@ -87,7 +87,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'tpsdb',
-        'HOST': 'localhost',
+        'HOST': '127.0.0.1',
         'USER': 'root',
         'PASSWORD': '',
         'PORT': '3306',
