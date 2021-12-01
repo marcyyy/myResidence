@@ -67,7 +67,10 @@ def tenantregister(request):
 
 
 def register(request):
-    tncontent = TermsAndCondition.objects.get(pk=1)
+    if TermsAndCondition.objects.all():
+        tncontent = TermsAndCondition.objects.get(pk=1)
+    else:
+        tncontent = 0
     regform = TenantRegistrationForm(initial={'status': 'Pending', 'date_joined': datetime.now(), 'isactive': 'True'})
     todate = date.today()
 
@@ -256,8 +259,12 @@ def admin_change(request):
 # allowed_users(allowed_roles=['tenant'])
 def home(request):
     tid = request.user.tenant.id
-    announcement = TenantAnnouncement.objects.get(pk=1)
-    news = AnnouncementNew.objects.order_by('-datepublished')
+    if TenantAnnouncement.objects.all():
+        announcement = TenantAnnouncement.objects.get(pk=1)
+        news = AnnouncementNew.objects.order_by('-datepublished')
+    else:
+        announcement = 0
+        news = 0
     notif = LogAdmin.objects.filter(tenant__id=tid, isactive='True')
     contract = TenantContract.objects.filter(tenant__id=tid, confirmation='None')
 

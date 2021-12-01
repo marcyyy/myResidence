@@ -332,6 +332,9 @@
     </div>
   </header>
 
+{%if announcement == 0%}
+    <h3 class="fst-italic" style="padding:100px; text-shadow: 0 0 2px #212121; text-align: center">No Announcements Yet</h3>
+{% else %}
 <main class="container" style="margin-top: 20px">
   <div class="p-4 p-md-5 mb-4 text-white rounded temp-image">
     <div class="col-md-6 px-0" >
@@ -406,6 +409,7 @@
   </div>
 
 </main>
+{% endif %}
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
     <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>

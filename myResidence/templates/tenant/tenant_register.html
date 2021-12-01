@@ -173,8 +173,12 @@
                       <div class="col-12">
                           <div class="card">
                               <h5 class="card-header">{{ todate }}</h5>
-                              <textarea class="card-body" style="height:500px; border:none; text-align: justify">
-                                {{ tncontent.tnc_content }}
+                              <textarea class="card-body" style="height:500px; border:none; text-align: justify" readonly>
+                                  {% if tncontent == 0 %}
+                                     There's no Terms and Conditions yet.
+                                  {% else %}
+                                     {{ tncontent.tnc_content }}
+                                  {% endif %}
                               </textarea>
                             </div>
                       </div>
