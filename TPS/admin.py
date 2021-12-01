@@ -12,21 +12,22 @@ from import_export.admin import ExportActionMixin
 from import_export import resources
 from import_export.fields import Field
 
+
 # run functions
-for each in TenantUnit.objects.all():
-    tuctr = Tenant.objects.filter(unit__id=each.id).count()
-    TenantUnit.objects.filter(id=each.id).update(tenant_num=tuctr)
+# for each in TenantUnit.objects.all():
+#    tuctr = Tenant.objects.filter(unit__id=each.id).count()
+#    TenantUnit.objects.filter(id=each.id).update(tenant_num=tuctr)
 
 
 # ADD ADMIN ACTIONS
 @admin.action(description='Mark selected as Approved')
 def make_approved(modeladmin, request, queryset):
-    queryset.update(status='Approved',isactive='True',)
+    queryset.update(status='Approved', isactive='True', )
 
 
 @admin.action(description='Mark selected as Approved')
 def make_approved_false(modeladmin, request, queryset):
-    queryset.update(status='Approved',isactive='',)
+    queryset.update(status='Approved', isactive='', )
 
 
 @admin.action(description='Mark selected as Approved')
@@ -55,12 +56,12 @@ def make_approved_reg(modeladmin, request, queryset):
             email=email,
             username=username,
             password=password,
-            first_name = first_name,
-            last_name = last_name,
-            is_staff = is_staff,
-            is_active = is_active,
-            date_joined = date_joined,
-            is_superuser = is_superuser
+            first_name=first_name,
+            last_name=last_name,
+            is_staff=is_staff,
+            is_active=is_active,
+            date_joined=date_joined,
+            is_superuser=is_superuser
         )
 
         user.set_password(password)
@@ -78,7 +79,7 @@ def make_approved_reg(modeladmin, request, queryset):
         image = object.image
 
         data2 = {'account': account_id, 'unit': unit, 'contact': contact, 'work_address': work_address,
-                 'dateofbirth': dateofbirth, 'image': image, 'is_active': 'True',}
+                 'dateofbirth': dateofbirth, 'image': image, 'is_active': 'True', }
         form2 = TenantRegForm(data2)
 
         print(form2.errors)
@@ -89,9 +90,9 @@ def make_approved_reg(modeladmin, request, queryset):
         else:
             messages.error(request, "Tenant Information save failed.")
 
-        TenantUnit.objects.filter(id=unit).update(tenant_num= tcount + 1)
+        TenantUnit.objects.filter(id=unit).update(tenant_num=tcount + 1)
 
-        #save
+        # save
         color_scheme = '#4facfe'
 
         data3 = {'account': account_id, 'color_scheme': color_scheme, 'is_active': 'True', }
@@ -107,42 +108,42 @@ def make_approved_reg(modeladmin, request, queryset):
 
 @admin.action(description='Mark selected as Rejected')
 def make_rejected(modeladmin, request, queryset):
-    queryset.update(status='Rejected', isactive='',)
+    queryset.update(status='Rejected', isactive='', )
 
 
 @admin.action(description='Mark selected as Rejected')
 def make_rejected_reason(modeladmin, request, queryset):
-    queryset.update(status='Rejected', isactive='',)
+    queryset.update(status='Rejected', isactive='', )
 
 
 @admin.action(description='Mark selected as Paid')
 def make_paid(modeladmin, request, queryset):
-    queryset.update(status='Paid', isactive='',)
+    queryset.update(status='Paid', isactive='', )
 
 
 @admin.action(description='Mark selected as Overdue')
 def make_overdue(modeladmin, request, queryset):
-    queryset.update(status='Overdue', isactive='True',)
+    queryset.update(status='Overdue', isactive='True', )
 
 
 @admin.action(description='Mark selected as Resolved')
 def make_resolved(modeladmin, request, queryset):
-    queryset.update(status='Resolved', isactive='',)
+    queryset.update(status='Resolved', isactive='', )
 
 
 @admin.action(description='Mark selected as Date Unavailable')
 def make_dateunavailable(modeladmin, request, queryset):
-    queryset.update(status='Date_Unavailable', isactive='True',)
+    queryset.update(status='Date_Unavailable', isactive='True', )
 
 
 @admin.action(description='Mark selected as Scheduled')
 def make_scheduled(modeladmin, request, queryset):
-    queryset.update(status='Scheduled', isactive='True',)
+    queryset.update(status='Scheduled', isactive='True', )
 
 
 @admin.action(description='Mark selected as Inactive')
 def make_inactive(modeladmin, request, queryset):
-    queryset.update(isactive='',)
+    queryset.update(isactive='', )
 
 
 class ActiveFilter(SimpleListFilter):
@@ -193,7 +194,8 @@ class TenantResource(resources.ModelResource):
     class Meta:
         model = Tenant
         fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'contact', 'dateofbirth', 'isactive')
-        export_order = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'contact', 'dateofbirth', 'isactive')
+        export_order = (
+        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'contact', 'dateofbirth', 'isactive')
 
 
 class BillingResource(resources.ModelResource):
@@ -205,8 +207,12 @@ class BillingResource(resources.ModelResource):
 
     class Meta:
         model = Billing
-        fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'type', 'billing_fee', 'due_date', 'status', 'isactive')
-        export_order = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'type', 'billing_fee', 'due_date', 'status', 'isactive')
+        fields = (
+        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'type', 'billing_fee', 'due_date',
+        'status', 'isactive')
+        export_order = (
+        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'type', 'billing_fee', 'due_date',
+        'status', 'isactive')
 
 
 class ProofResource(resources.ModelResource):
@@ -218,8 +224,10 @@ class ProofResource(resources.ModelResource):
 
     class Meta:
         model = ProofOfPayment
-        fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_submitted', 'type', 'status', 'isactive')
-        export_order = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_submitted', 'type', 'status', 'isactive')
+        fields = (
+        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_submitted', 'type', 'status', 'isactive')
+        export_order = (
+        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_submitted', 'type', 'status', 'isactive')
 
 
 class VisitorResource(resources.ModelResource):
@@ -230,8 +238,11 @@ class VisitorResource(resources.ModelResource):
 
     class Meta:
         model = Visitor
-        fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'purpose', 'visitor_count', 'visitor_names', 'visit_date', 'duration', 'status', 'isactive')
-        export_order = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'purpose', 'visitor_count', 'visitor_names', 'visit_date', 'duration', 'status', 'isactive')
+        fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'purpose', 'visitor_count',
+                  'visitor_names', 'visit_date', 'duration', 'status', 'isactive')
+        export_order = (
+        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'purpose', 'visitor_count',
+        'visitor_names', 'visit_date', 'duration', 'status', 'isactive')
 
 
 class ReportResource(resources.ModelResource):
@@ -242,8 +253,12 @@ class ReportResource(resources.ModelResource):
 
     class Meta:
         model = Report
-        fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'category', 'details', 'neighbour', 'staff', 'status', 'isactive')
-        export_order = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'category', 'details', 'neighbour', 'staff', 'status', 'isactive')
+        fields = (
+        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'category', 'details', 'neighbour',
+        'staff', 'status', 'isactive')
+        export_order = (
+        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'category', 'details', 'neighbour',
+        'staff', 'status', 'isactive')
 
 
 class RepairResource(resources.ModelResource):
@@ -254,8 +269,11 @@ class RepairResource(resources.ModelResource):
 
     class Meta:
         model = Repair
-        fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'category', 'details', 'date_available', 'status', 'isactive')
-        export_order = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'category', 'details', 'date_available', 'status', 'isactive')
+        fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'category', 'details',
+                  'date_available', 'status', 'isactive')
+        export_order = (
+        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'category', 'details',
+        'date_available', 'status', 'isactive')
 
 
 class AttritionResource(resources.ModelResource):
@@ -266,8 +284,10 @@ class AttritionResource(resources.ModelResource):
 
     class Meta:
         model = AttritionPrediction
-        fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'datetime', 'attrition_probability', 'isactive')
-        export_order = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'datetime', 'attrition_probability', 'isactive')
+        fields = (
+        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'datetime', 'attrition_probability', 'isactive')
+        export_order = (
+        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'datetime', 'attrition_probability', 'isactive')
 
 
 class LogsResource(resources.ModelResource):
@@ -278,8 +298,10 @@ class LogsResource(resources.ModelResource):
 
     class Meta:
         model = LogTenant
-        fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_time', 'activity', 'action', 'isactive')
-        export_order = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_time', 'activity', 'action', 'isactive')
+        fields = (
+        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_time', 'activity', 'action', 'isactive')
+        export_order = (
+        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_time', 'activity', 'action', 'isactive')
 
 
 class ContractResource(resources.ModelResource):
@@ -291,13 +313,16 @@ class ContractResource(resources.ModelResource):
 
     class Meta:
         model = TenantContract
-        fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'rent', 'late_collection', 'grace_period', 'legal_rent', 'deposit', 'months_occupied', 'roommates', 'epayment')
-        export_order = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'rent', 'late_collection', 'grace_period', 'legal_rent', 'deposit', 'months_occupied', 'roommates', 'epayment')
+        fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'rent', 'late_collection', 'grace_period',
+                  'legal_rent', 'deposit', 'months_occupied', 'roommates', 'epayment')
+        export_order = (
+        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'rent', 'late_collection', 'grace_period',
+        'legal_rent', 'deposit', 'months_occupied', 'roommates', 'epayment')
 
 
 # ADMIN LIST TABLES
 class AdminList(ExportActionMixin, admin.ModelAdmin):
-    list_display = ('id','get_account', 'image_tag', 'contact', 'get_dateofbirth', 'get_isactive',)
+    list_display = ('id', 'get_account', 'image_tag', 'contact', 'get_dateofbirth', 'get_isactive',)
     list_filter = ('account__date_joined',)
     ordering = ('account',)
     resource_class = AdminResource
@@ -329,7 +354,7 @@ class AdminList(ExportActionMixin, admin.ModelAdmin):
 class TenantUnitList(ExportActionMixin, admin.ModelAdmin):
     list_display = ('get_unit', 'floor', 'room', 'get_tenantnum')
     list_filter = ('floor',)
-    ordering = ('floor','room')
+    ordering = ('floor', 'room')
 
     def get_unit(self, obj):
         return str(obj.floor) + str(obj.room)
@@ -379,7 +404,9 @@ class TenantList(ExportActionMixin, admin.ModelAdmin):
 
 
 class TenantRegistrationList(ExportActionMixin, admin.ModelAdmin):
-    list_display = ('get_name', 'get_unit', 'get_datejoined', 'image_tag', 'username', 'email', 'contact', 'get_dateofbirth', 'status', 'get_isactive',)
+    list_display = (
+    'get_name', 'get_unit', 'get_datejoined', 'image_tag', 'username', 'email', 'contact', 'get_dateofbirth', 'status',
+    'get_isactive',)
     list_filter = [ActiveFilter]
     ordering = ('-date_joined',)
 
@@ -459,9 +486,11 @@ class BillingTypeList(ExportActionMixin, admin.ModelAdmin):
 
 
 class BillingList(ExportActionMixin, admin.ModelAdmin):
-    list_display = ('get_unit', 'get_dateissued', 'get_name', 'get_billingname', 'get_billingfee', 'get_duedate', 'status', 'get_isactive',)
-    list_filter = ('status','date_issued','due_date')
-    search_fields = ['tenant__account__first_name','tenant__account__last_name']
+    list_display = (
+    'get_unit', 'get_dateissued', 'get_name', 'get_billingname', 'get_billingfee', 'get_duedate', 'status',
+    'get_isactive',)
+    list_filter = ('status', 'date_issued', 'due_date')
+    search_fields = ['tenant__account__first_name', 'tenant__account__last_name']
     actions = [make_paid]
     resource_class = BillingResource
 
@@ -502,7 +531,9 @@ class BillingList(ExportActionMixin, admin.ModelAdmin):
 
 
 class ProofList(ExportActionMixin, admin.ModelAdmin):
-    list_display = ('get_unit', 'get_datesubmitted', 'get_name', 'get_billingname', 'get_billingfee', 'image_tag', 'get_duedate', 'status', 'get_isactive',)
+    list_display = (
+    'get_unit', 'get_datesubmitted', 'get_name', 'get_billingname', 'get_billingfee', 'image_tag', 'get_duedate',
+    'status', 'get_isactive',)
     list_filter = [ActiveFilter]
     ordering = ('date_submitted',)
     actions = [make_approved_proof, make_rejected]
@@ -565,7 +596,7 @@ class TncList(ExportActionMixin, admin.ModelAdmin):
 
 
 class AnnouncementList(ExportActionMixin, admin.ModelAdmin):
-    list_display = ('get_main', 'get_sub', 'get_link', 'image_tag' ,'get_isactive',)
+    list_display = ('get_main', 'get_sub', 'get_link', 'image_tag', 'get_isactive',)
 
     def get_main(self, obj):
         return obj.main_news.headline
@@ -598,7 +629,7 @@ class AnnouncementList(ExportActionMixin, admin.ModelAdmin):
 class NewsList(ExportActionMixin, admin.ModelAdmin):
     list_display = ('get_date', 'image', 'headline', 'content', 'get_isactive',)
     list_filter = ('datepublished',)
-    actions = [make_inactive,]
+    actions = [make_inactive, ]
 
     def get_date(self, obj):
         return obj.datepublished
@@ -614,7 +645,9 @@ class NewsList(ExportActionMixin, admin.ModelAdmin):
 
 
 class VisitorList(ExportActionMixin, admin.ModelAdmin):
-    list_display = ('get_dateissued', 'get_name', 'purpose', 'get_visitdate', 'get_count', 'get_duration', 'status', 'reason', 'get_isactive',)
+    list_display = (
+    'get_dateissued', 'get_name', 'purpose', 'get_visitdate', 'get_count', 'get_duration', 'status', 'reason',
+    'get_isactive',)
     list_filter = [ActiveFilter]
     actions = [make_approved_false, make_rejected]
     resource_class = VisitorResource
@@ -648,7 +681,9 @@ class VisitorList(ExportActionMixin, admin.ModelAdmin):
 
 
 class ReportList(ExportActionMixin, admin.ModelAdmin):
-    list_display = ('ticket_no', 'get_dateissued', 'get_name', 'get_unit', 'get_category', 'get_details', 'image_tag', 'status', 'get_isactive',)
+    list_display = (
+    'ticket_no', 'get_dateissued', 'get_name', 'get_unit', 'get_category', 'get_details', 'image_tag', 'status',
+    'get_isactive',)
     list_filter = ('status', 'category',)
     resource_class = ReportResource
 
@@ -693,7 +728,8 @@ class ReportList(ExportActionMixin, admin.ModelAdmin):
 
 
 class RepairList(ExportActionMixin, admin.ModelAdmin):
-    list_display = ('ticket_no', 'get_dateissued', 'get_name', 'get_unit', 'get_category', 'get_details', 'image_tag', 'get_dateavailable', 'status', 'get_isactive',)
+    list_display = ('ticket_no', 'get_dateissued', 'get_name', 'get_unit', 'get_category', 'get_details', 'image_tag',
+                    'get_dateavailable', 'status', 'get_isactive',)
     list_filter = ('status', 'category',)
     actions = [make_scheduled, make_dateunavailable]
     resource_class = RepairResource
@@ -774,7 +810,7 @@ class AttritionList(ExportActionMixin, admin.ModelAdmin):
 
 
 class LogTenantList(ExportActionMixin, admin.ModelAdmin):
-    list_display = ('get_name', 'get_unit',  'get_datetime', 'activity', 'action',)
+    list_display = ('get_name', 'get_unit', 'get_datetime', 'activity', 'action',)
     list_filter = ('activity',)
     resource_class = LogsResource
 
@@ -794,7 +830,9 @@ class LogTenantList(ExportActionMixin, admin.ModelAdmin):
 
 
 class ContractList(ExportActionMixin, admin.ModelAdmin):
-    list_display = ('get_name', 'get_unit',  'rent', 'get_late', 'get_grace', 'get_legal', 'deposit', 'get_months', 'get_mates', 'get_epay', 'confirmation')
+    list_display = (
+    'get_name', 'get_unit', 'rent', 'get_late', 'get_grace', 'get_legal', 'deposit', 'get_months', 'get_mates',
+    'get_epay', 'confirmation')
     resource_class = ContractResource
 
     def get_unit(self, obj):
@@ -855,5 +893,3 @@ admin.site.register(Repair, RepairList)
 admin.site.register(AttritionPrediction, AttritionList)
 admin.site.register(LogTenant, LogTenantList)
 admin.site.register(TenantContract, ContractList)
-
-
