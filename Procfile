@@ -1,1 +1,1 @@
-web: gunicorn TPS.wsgi
+web:gunicorn TPS.wsgi
