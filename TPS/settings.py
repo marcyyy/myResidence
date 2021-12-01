@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
+
 from django.conf.global_settings import LANGUAGES as DJANGO_LANGUAGES
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -88,14 +89,15 @@ WSGI_APPLICATION = 'TPS.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tpsdb',
-        'HOST': '127.0.0.1',
-        'USER': 'root',
-        'PASSWORD': '',
-        'PORT': '3306',
-    }
+    'default': env.db(),
+    #'default': {
+    #    'ENGINE': 'django.db.backends.mysql',
+    #    'NAME': 'tpsdb',
+    #    'HOST': '127.0.0.1',
+    #    'USER': 'root',
+    #    'PASSWORD': '',
+    #    'PORT': '3306',
+    #}
 }
 
 # Password validation
