@@ -88,21 +88,13 @@ WSGI_APPLICATION = 'TPS.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    #'default': {
-    #    'ENGINE': 'django.db.backends.mysql',
-    #    'NAME': 'tpsdb',
-    #    'HOST': '127.0.0.1',
-    #    'USER': 'root',
-    #    'PASSWORD': '',
-    #    'PORT': '3306',
-    #}
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'tpsdb',
-        'HOST': 'localhost',
-        'USER': 'postgres',
-        'PASSWORD': '123',
-        'PORT': '',
+        'HOST': '127.0.0.1',
+        'USER': 'root',
+        'PASSWORD': '',
+        'PORT': '3306',
     }
 }
 
