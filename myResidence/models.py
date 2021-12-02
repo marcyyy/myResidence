@@ -238,8 +238,8 @@ class BillingType(models.Model):
 
 
 class Billing(models.Model):
-    unit = models.ForeignKey(TenantUnit, on_delete=models.CASCADE, blank=True, null=True)
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, blank=True, null=True)
+    unit = models.ForeignKey(TenantUnit, on_delete=models.CASCADE)
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
     date_issued = models.DateField(auto_now_add=True)
     billing_type = models.ForeignKey(BillingType,  on_delete=models.CASCADE)
     billing_fee = models.FloatField()
