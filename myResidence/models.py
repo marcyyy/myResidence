@@ -263,22 +263,7 @@ class Billing(models.Model):
 
     def save(self, *args, **kwargs):
         if self.tenant is not None and self.unit is None:
-            bcount = Billing.objects.all().count()
-            if bcount == 0:
-                lastid = 1
-            else:
-                lastid = Billing.objects.latest('id')
-            idcount = 1
 
-            if bcount == 0:
-                self.id = lastid
-            else:
-                self.id = lastid.id + idcount
-            self.date_issued = datetime.now()
-            self.isactive = 'True'
-            self.status = 'Pending'
-            self.billing_fee = self.billing_fee
-            self.tenant = self.tenant
             super().save(*args, **kwargs)
 
             from .forms import AdminLogsForm

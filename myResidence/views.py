@@ -102,26 +102,27 @@ def loginpage(request):
     Repair.objects.filter(date_available__lte=todate, status='Pending').update(status='Date Unavailable')
 
     # billings overdue and grace period
-    billings_ud = Billing.objects.all()
+    if Billing.objects.all():
+        billings_ud = Billing.objects.all()
 
-    for each in billings_ud:
-        if each.is_late == "No" and each.status == "Overdue":
-            datepay = each.due_date
-            contract = TenantContract.objects.get(tenant=each.tenant)
-            b = abs(relativedelta(datepay, todate))
+        for each in billings_ud:
+            if each.is_late == "No" and each.status == "Overdue":
+                datepay = each.due_date
+                contract = TenantContract.objects.get(tenant=each.tenant)
+                b = abs(relativedelta(datepay, todate))
 
-            if b.days >= contract.grace_period:
-                latecollection = contract.late_collection
-                if latecollection <= 5:
-                    addpay = float(latecollection) * .01
-                    percentpay = float(each.billing_fee) * float(addpay)
-                    totalpay = float(each.billing_fee) + float(percentpay)
-                    Billing.objects.filter(id=each.id).update(is_late='Yes', billing_fee=totalpay)
-                else:
-                    totalpay = float(latecollection) + float(each.billing_fee)
-                    Billing.objects.filter(id=each.id).update(is_late='Yes', billing_fee=totalpay)
-        else:
-            pass
+                if b.days >= contract.grace_period:
+                    latecollection = contract.late_collection
+                    if latecollection <= 5:
+                        addpay = float(latecollection) * .01
+                        percentpay = float(each.billing_fee) * float(addpay)
+                        totalpay = float(each.billing_fee) + float(percentpay)
+                        Billing.objects.filter(id=each.id).update(is_late='Yes', billing_fee=totalpay)
+                    else:
+                        totalpay = float(latecollection) + float(each.billing_fee)
+                        Billing.objects.filter(id=each.id).update(is_late='Yes', billing_fee=totalpay)
+            else:
+                pass
 
     # create rent billing
     last_month_filter = datetime.today() - timedelta(days=get_lapse())
