@@ -3,7 +3,7 @@
 #   * Rearrange models' order
 #   * Make sure each model has one field with primary_key=True
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+#   * Remove ` ` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from datetime import datetime
 
@@ -128,7 +128,7 @@ class AccountCustomization(models.Model):
         return self.account.first_name + " " + self.account.last_name
 
     class Meta:
-        managed = False
+         
         db_table = 'account_customize'
 
 
@@ -148,7 +148,7 @@ class Admin(models.Model):
             return self.account.first_name + " " + self.account.last_name
 
     class Meta:
-        managed = False
+         
         db_table = 'admin'
 
 
@@ -161,7 +161,7 @@ class TenantUnit(models.Model):
         return str(self.floor) + str(self.room)
 
     class Meta:
-        managed = False
+         
         db_table = 'tenant_unit'
 
 
@@ -182,7 +182,7 @@ class Tenant(models.Model):
         return self.account.first_name + " " + self.account.last_name
 
     class Meta:
-        managed = False
+         
         db_table = 'tenants'
 
 
@@ -215,7 +215,7 @@ class TenantRegistration(models.Model):
         return str(self.id)
 
     class Meta:
-        managed = False
+         
         db_table = 'tenant_registration'
 
 
@@ -233,7 +233,7 @@ class BillingType(models.Model):
         return self.billing_name
 
     class Meta:
-        managed = False
+         
         db_table = 'billing_type'
 
 
@@ -338,7 +338,7 @@ class Billing(models.Model):
 
 
     class Meta:
-        managed = False
+         
         ordering = ['-date_issued']
         db_table = 'billings'
 
@@ -365,7 +365,7 @@ class ProofOfPayment(models.Model):
         return self.billing.billing_type.billing_name
 
     class Meta:
-        managed = False
+         
         db_table = 'proof_payment'
 
 
@@ -386,7 +386,7 @@ class LogAdmin(models.Model):
         return self.admin.account.first_name + " " + self.admin.account.last_name
 
     class Meta:
-        managed = False
+         
         db_table = 'log_admin'
 
 
@@ -406,7 +406,7 @@ class LogTenant(models.Model):
         return self.tenant.account.first_name + " " + self.tenant.account.last_name
 
     class Meta:
-        managed = False
+         
         db_table = 'log_tenants'
 
 
@@ -436,7 +436,7 @@ class Repair(models.Model):
         return self.tenant.account.first_name + " " + self.tenant.account.last_name + " REPAIR TICKET #" + str(self.id)
 
     class Meta:
-        managed = False
+         
         ordering = ['-date_issued']
         db_table = 'repair'
 
@@ -465,7 +465,7 @@ class Report(models.Model):
         return self.tenant.account.first_name + " " + self.tenant.account.last_name + " REPORT TICKET #" + str(self.id)
 
     class Meta:
-        managed = False
+         
         ordering = ['-date_issued']
         db_table = 'report'
 
@@ -497,7 +497,7 @@ class Visitor(models.Model):
         return self.tenant.account.first_name + " " + self.tenant.account.last_name + " VISITOR REQUEST #" + str(self.id)
 
     class Meta:
-        managed = False
+         
         ordering = ['-date_issued']
         db_table = 'visitors'
 
@@ -510,7 +510,7 @@ class TermsAndCondition(models.Model):
         return "myResidence Terms and Conditions"
 
     class Meta:
-        managed = False
+         
         db_table = 'cms_tnc'
 
 
@@ -530,7 +530,7 @@ class TenantAnnouncement(models.Model):
         return "myResidence Announcements"
 
     class Meta:
-        managed = False
+         
         db_table = 'cms_announcements'
 
 
@@ -550,7 +550,7 @@ class AnnouncementNew(models.Model):
         return self.headline
 
     class Meta:
-        managed = False
+         
         ordering = ['-datepublished']
         db_table = 'cms_news'
 
@@ -570,7 +570,7 @@ class AttritionPrediction(models.Model):
         return self.tenant.account.first_name + " " + self.tenant.account.last_name
 
     class Meta:
-        managed = False
+         
         db_table = 'tenant_attrition'
 
 
@@ -588,5 +588,5 @@ class TenantContract(models.Model):
     confirmation = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
-        managed = False
+         
         db_table = 'tenant_contract'
