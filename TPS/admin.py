@@ -14,9 +14,9 @@ from import_export.fields import Field
 
 
 # run functions
-# for each in TenantUnit.objects.all():
-#    tuctr = Tenant.objects.filter(unit__id=each.id).count()
-#    TenantUnit.objects.filter(id=each.id).update(tenant_num=tuctr)
+for each in TenantUnit.objects.all():
+    tuctr = Tenant.objects.filter(unit__id=each.id).count()
+    TenantUnit.objects.filter(id=each.id).update(tenant_num=tuctr)
 
 
 # ADD ADMIN ACTIONS
