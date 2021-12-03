@@ -634,7 +634,7 @@
 
                                               <div class="col-md-6">
                                                   <label for="roommates" class="form-label">Does the tenant have Roommates?</label>
-                                                      <select class="form-select" id="roommates" name="roommates" style="background: #eee; pointer-events: none; touch-action: none;">
+                                                      <select class="form-select" id="roommates" name="roommates" style="background: #eee;"> <!-- pointer-events: none; touch-action: none; -->
                                                               {% if each.unit.tenant_num > 1 %}
                                                                         <option value="1" selected >Yes</option>
                                                                         <option value="0">No</option>
@@ -647,7 +647,7 @@
 
                                               <div class="col-md-6">
                                                   <label for="epay" class="form-label">Does the tenant use electronic payments?</label>
-                                                      <select class="form-select" id="epay" name="epay" style="background: #eee; pointer-events: none; touch-action: none;">
+                                                      <select class="form-select" id="epay" name="epay" style="background: #eee;"> <!-- pointer-events: none; touch-action: none; -->
                                                                 {% if each.proofofpayment_set.all %}
                                                                      <option value="1" selected>Yes</option>
                                                                      <option value="0">No</option>
@@ -726,7 +726,7 @@
 
                                                   <div class="col-md-6">
                                                       <label for="roommates" class="form-label">Does the tenant have Roommates?</label>
-                                                          <select class="form-select" id="roommates" name="roommates" style="background: #eee; pointer-events: none; touch-action: none;">
+                                                          <select class="form-select" id="roommates" name="roommates" style="background: #eee;"> <!-- pointer-events: none; touch-action: none; -->
                                                               {% if each.unit.tenant_num > 1 %}
                                                                         <option value="1" selected >Yes</option>
                                                                         <option value="0">No</option>
@@ -739,7 +739,7 @@
 
                                                   <div class="col-md-6">
                                                       <label for="epay" class="form-label">Does the tenant use electronic payments?</label>
-                                                      <select class="form-select" id="epay" name="epay" style="background: #eee; pointer-events: none; touch-action: none;">
+                                                      <select class="form-select" id="epay" name="epay" style="background: #eee; "> <!-- pointer-events: none; touch-action: none; -->
                                                               {% if each.proofofpayment_set.all %}
                                                                          <option value="1" selected>Yes</option>
                                                                          <option value="0">No</option>
