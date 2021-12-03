@@ -90,6 +90,12 @@ def register(request):
 
 def loginpage(request):
     # ---------------------------------- init functions ---------------------------------- #
+
+    # tenant number add
+    for each in TenantUnit.objects.all():
+        tuctr = Tenant.objects.filter(unit__id=each.id).count()
+        TenantUnit.objects.filter(id=each.id).update(tenant_num=tuctr)
+
     # billings overdue
     todate = date.today()
     todate1 = todate.strftime("%Y-%m-%d")
