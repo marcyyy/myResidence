@@ -274,7 +274,7 @@ class Billing(models.Model):
             super().save(*args, **kwargs)
 
             from .forms import AdminLogsForm
-            unit = self.tenant.unit
+            # unit = self.tenant.unit
             date_time = datetime.now()
             tenant = self.tenant
             activity = "Billing"
