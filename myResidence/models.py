@@ -263,7 +263,14 @@ class Billing(models.Model):
 
     def save(self, *args, **kwargs):
         if self.tenant is not None and self.unit is None:
-
+            bcount = Billing.objects.all().count()
+            self.id = bcount + 1
+            self.date_issued = datetime.now()
+            self.isactive = 'True'
+            self.status = 'Pending'
+            self.unit = self.tenant.unit
+            self.billing_fee = self.billing_fee
+            self.tenant = self.tenant
             super().save(*args, **kwargs)
 
             from .forms import AdminLogsForm
@@ -273,7 +280,7 @@ class Billing(models.Model):
             activity = "Billing"
             action = "Billing #" + str(self.id)
 
-            data = {'date_time': date_time, 'tenant': tenant, 'unit': unit, 'activity': activity, 'action': action, 'is_active': 'True', }
+            data = {'date_time': date_time, 'tenant': tenant, 'activity': activity, 'action': action, 'is_active': 'True', }
             form = AdminLogsForm(data)
 
             print(form.errors)
