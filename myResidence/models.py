@@ -267,13 +267,13 @@ class Billing(models.Model):
             super().save(*args, **kwargs)
 
             from .forms import AdminLogsForm
-            unit = Tenant.objects.get(id=self.tenant.id)
+            unit = self.tenant.unit
             date_time = datetime.now()
             tenant = self.tenant
             activity = "Billing"
             action = "Billing #" + str(self.id)
 
-            data = {'date_time': date_time, 'tenant': tenant, 'unit': unit.unit_id, 'activity': activity, 'action': action, 'is_active': 'True', }
+            data = {'date_time': date_time, 'tenant': tenant, 'unit': unit, 'activity': activity, 'action': action, 'is_active': 'True', }
             form = AdminLogsForm(data)
 
             print(form.errors)
