@@ -97,14 +97,16 @@
                                                                 <br><br><strong>IN WITNESS WHEREOF</strong> ,  parties herein affixed their signatures on the date and place above written.
                                                   </p>
 
-                                                  <p style="text-align: center">
+                                                   <p style="text-align: center">
                                                       <br><input type="text" style="margin: 5px; width: 200px" value="" placeholder="Name of Lessor" required>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" style="margin: 5px; width: 200px" value="" placeholder="Name of Lessee" id="lessee2" required>
                                                       <br>LESSOR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LESSEE
                                                       <br>
                                                       <br>Signed in the presence of:
                                                       <br>
-                                                      <br>_____________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;______________________________
-                                                      <br>
+                                                      <br><img class="udimg" id="output" width="200" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img class="udimg2" id="output2" width="200" />
+                                                       <br><p style="text-align: center;" id="underlineimg">_____________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;______________________________</p>
+                                                      <br><p style="text-align: center"><label for="file" style="cursor: pointer;" id="uploadimg">Upload E-Signature</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label for="file2" style="cursor: pointer;" id="uploadimg2">Upload E-Signature</label></p>
+                                                      <br><input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;"> <input type="file"  accept="image/*" name="image2" id="file2"  onchange="loadFile2(event)" style="display: none;">
                                                   </p>
 
                                                   <h4 style="margin-top: 40px">ACKNOWLEDGEMENT</h4>
@@ -126,7 +128,7 @@
                                                   <p>
                                                       <br>Known to me and to me known to be the same persons who executed the foregoing instrument and acknowledged to me that the same is their free and voluntary act and deed.
                                                       <br>
-                                                      <br>This instrument consisting of <input type="text" style="margin: 5px; width: 50px" value="1" required> page/s, including the page on which this acknowledgement is written, has been signed on each and every page thereof by the concerned parties and their witnesses, and and sealed with my notarial seal.
+                                                      <br>This instrument consisting of <input type="text" style="margin: 5px; width: 50px" value="3" required> page/s, including the page on which this acknowledgement is written, has been signed on each and every page thereof by the concerned parties and their witnesses, and and sealed with my notarial seal.
                                                       <br>
                                                       <br>WITNESS MY HAND AND SEAL, on the date and place first above written.
                                                       <br>
@@ -138,9 +140,9 @@
                                                   </p>
 
                                                   <p>
-                                                      <br>Doc. No.<input type="text" style="margin: 5px; width: 50px" value="01" >;
-                                                      <br>Page No.<input type="text" style="margin: 5px; width: 50px" value="01" >;
-                                                      <br>Book No.<input type="text" style="margin: 5px; width: 50px" value="01" >;
+                                                      <br>Doc. No.<input type="text" style="margin: 5px; width: 50px" value="00" >;
+                                                      <br>Page No.<input type="text" style="margin: 5px; width: 50px" value="00" >;
+                                                      <br>Book No.<input type="text" style="margin: 5px; width: 50px" value="00" >;
                                                       <br>Series of 20<input type="text" style="margin: 5px; width: 50px" value="{{ year }}" >.
                                                       <br>
                                                   </p>
@@ -157,7 +159,8 @@
                                                                                 type:'html',
                                                                                 documentTitle: 'Lease Contract',
                                                                                 onPrintDialogClose: 'Success',
-                                                                                style:' .contract-info{background-color: #ffffff;}input{text-align:center;background-color: #fcfcfc; border:0; border-bottom:2px solid lightgrey;}.contract-info input{font-size:15px;font-family: Times New Roman;}.contract-info h4{font-size: 20px;text-align: center;font-weight: bold;}.contract-info p{text-align:justify}'
+                                                                                ignoreElements: ['uploadimg','uploadimg2','underlineimg'],
+                                                                                style:' .contract-info{background-color: #ffffff;}input{text-align:center;background-color: #fcfcfc; border:0; border-bottom:2px solid lightgrey;}.contract-info input{font-size:15px;font-family: Times New Roman;}.contract-info h4{font-size: 20px;text-align: center;font-weight: bold;}.contract-info p{text-align:justify}.udimg{margin-bottom:-170px}.udimg2{margin-bottom:-170px}'
                                                                             })">
                                                                     Generate PDF
                                                                 </button>
@@ -177,6 +180,16 @@
           document.getElementById("lessee2").value = e.value;
           document.getElementById("lessee3").value = e.value;
         }
+
+        var loadFile = function(event) {
+            var image = document.getElementById('output');
+            image.src = URL.createObjectURL(event.target.files[0]);
+        };
+
+        var loadFile2 = function(event) {
+            var image2 = document.getElementById('output2');
+            image2.src = URL.createObjectURL(event.target.files[0]);
+        };
     </script>
 
     <script src="{% static '/js/bootstrap.bundle.min.js'%}"></script>
