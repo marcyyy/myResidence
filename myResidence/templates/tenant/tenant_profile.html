@@ -192,6 +192,26 @@
 
     </div>
 
+    <div class="my-3 p-3 bg-body rounded shadow-sm">
+          <div class="border-bottom p-1">
+            <p class="pb-2 color-scheme-text" style="margin-bottom: -10px;font-weight: bold; font-size:18px" id="customize">Deposit</p>
+            <p class="text-muted" style="margin-bottom: 5px;font-size:15px;">Total Remaining</p>
+          </div>
+
+           <ul class="list-unstyled p-1 border-bottom" style="margin-top:10px; align-items: left; justify-content: left">
+                    <li style="justify-content:center; display: flex">
+                      {% if request.user.tenant.tenantcontract_set.all %}
+                          {% for tc in request.user.tenant.tenantcontract_set.all %}
+                                <p class="" style="font-size:15px;"><strong>₱ {{ tc.deposit|floatformat:2|intcomma }}</strong></p>
+                          {% endfor %}
+                      {% else %}
+                          <p class="" style="font-size:15px">No Recorded Deposit</p>
+                      {% endif %}
+                    </li>
+            </ul>
+
+    </div>
+
   </div>
 
   <div class="b-example-divider" style="width: 0px"></div>

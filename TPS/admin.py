@@ -12,7 +12,6 @@ from import_export.admin import ExportActionMixin
 from import_export import resources
 from import_export.fields import Field
 
-
 # run functions
 for each in TenantUnit.objects.all():
     tuctr = Tenant.objects.filter(unit__id=each.id).count()
@@ -26,15 +25,93 @@ def make_approved(modeladmin, request, queryset):
 
 
 @admin.action(description='Mark selected as Approved')
-def make_approved_false(modeladmin, request, queryset):
-    queryset.update(status='Approved', isactive='', )
+def make_approved_visit(modeladmin, request, queryset):
+    for obj in queryset:
+        if obj.status == "Pending":
+            queryset.update(status='Approved', isactive='', )
+            messages.success(request, "Visitor Request #" + str(obj.id) + " Approved.")
+
+            from myResidence.forms import AdminLogsForm
+            date_time = datetime.now()
+            admin = 1
+            tenant = obj.tenant
+            activity = "Visitor"
+            action = "Visitor Request #" + str(obj.id) + " approved."
+
+            data = {'date_time': date_time, 'admin': admin, 'tenant': tenant, 'activity': activity,
+                    'action': action, 'is_active': 'True', }
+            form = AdminLogsForm(data)
+
+            print(form.errors)
+            if form.is_valid():
+                form.save()
+        else:
+            messages.error(request, "Visitor Request #" + str(obj.id) + " already processed.")
 
 
 @admin.action(description='Mark selected as Approved')
 def make_approved_proof(modeladmin, request, queryset):
     for obj in queryset:
-        Billing.objects.filter(id=obj.billing.id).update(status='Paid', isactive='', )
-        ProofOfPayment.objects.filter(id=obj.id).update(status='Approved', isactive='', )
+        if obj.status == "Pending":
+            Billing.objects.filter(id=obj.billing.id).update(status='Paid', isactive='', )
+            ProofOfPayment.objects.filter(id=obj.id).update(status='Approved', isactive='', )
+            messages.success(request, "Proof of Payment #" + str(obj.id) + " Approved.")
+
+            from myResidence.forms import AdminLogsForm
+            date_time = datetime.now()
+            admin = 1
+            tenant = obj.tenant
+            activity = "Proof of Payment"
+            action = "Proof of Payment #" + str(obj.id) + " approved."
+
+            data = {'date_time': date_time, 'admin': admin, 'tenant': tenant, 'activity': activity,
+                    'action': action, 'is_active': 'True', }
+            form = AdminLogsForm(data)
+
+            print(form.errors)
+            if form.is_valid():
+                form.save()
+        else:
+            messages.error(request, "Proof of Payment #" + str(obj.id) + " already processed.")
+
+
+@admin.action(description='Mark as Paid thru Deposit')
+def make_approved_deposit(modeladmin, request, queryset):
+    for obj in queryset:
+        if obj.status == "Pending":
+            if TenantContract.objects.filter(tenant=obj.tenant):
+                contract = TenantContract.objects.get(tenant=obj.tenant)
+                init_dep = float(contract.deposit)
+                billing_fee = float(obj.billing_fee)
+                remain_dep = init_dep - billing_fee
+
+                if remain_dep > 0:
+                    Billing.objects.filter(id=obj.id).update(status='Paid (Deposit)', isactive='', )
+                    TenantContract.objects.filter(tenant=obj.tenant).update(deposit=remain_dep)
+
+                    from myResidence.forms import AdminLogsForm
+                    date_time = datetime.now()
+                    admin = 1
+                    tenant = obj.tenant
+                    activity = "Billing"
+                    action = "Billing #" + str(obj.id) + " paid with deposit."
+
+                    data = {'date_time': date_time, 'admin': admin, 'tenant': tenant, 'activity': activity,
+                            'action': action,
+                            'is_active': 'True', }
+                    form = AdminLogsForm(data)
+
+                    print(form.errors)
+                    if form.is_valid():
+                        form.save()
+
+                    messages.success(request, "Billing #" + str(obj.id) + " Successfully Paid with Deposit.")
+                else:
+                    messages.error(request, "Tenant Deposit is Insufficient.")
+            else:
+                messages.error(request, "Tenant have no deposit.")
+        else:
+            messages.error(request, "Billing Record #" + str(obj.id) + " already paid.")
 
 
 @admin.action(description='Register selected Tenants')
@@ -107,18 +184,103 @@ def make_approved_reg(modeladmin, request, queryset):
 
 
 @admin.action(description='Mark selected as Rejected')
-def make_rejected(modeladmin, request, queryset):
-    queryset.update(status='Rejected', isactive='', )
+def make_rejected_reg(modeladmin, request, queryset):
+    for obj in queryset:
+        if obj.status == "Pending":
+            queryset.update(status='Rejected', isactive='', )
+            messages.success(request, "Tenant Registration #" + str(obj.id) + " Rejected.")
+
+            from myResidence.forms import AdminLogsForm
+            date_time = datetime.now()
+            admin = 1
+            tenant = obj.tenant
+            activity = "Registration"
+            action = "Tenant Registration #" + str(obj.id) + " rejected."
+
+            data = {'date_time': date_time, 'admin': admin, 'tenant': tenant, 'activity': activity,
+                    'action': action, 'is_active': 'True', }
+            form = AdminLogsForm(data)
+
+            print(form.errors)
+            if form.is_valid():
+                form.save()
+        else:
+            messages.error(request, "Tenant Registration #" + str(obj.id) + " already processed.")
 
 
 @admin.action(description='Mark selected as Rejected')
-def make_rejected_reason(modeladmin, request, queryset):
-    queryset.update(status='Rejected', isactive='', )
+def make_rejected_proof(modeladmin, request, queryset):
+    for obj in queryset:
+        if obj.status == "Pending":
+            queryset.update(status='Rejected', isactive='', )
+            messages.success(request, "Proof of Payment #" + str(obj.id) + " Rejected.")
+
+            from myResidence.forms import AdminLogsForm
+            date_time = datetime.now()
+            admin = 1
+            tenant = obj.tenant
+            activity = "Proof of Payment"
+            action = "Proof of Payment #" + str(obj.id) + " rejected."
+
+            data = {'date_time': date_time, 'admin': admin, 'tenant': tenant, 'activity': activity,
+                    'action': action, 'is_active': 'True', }
+            form = AdminLogsForm(data)
+
+            print(form.errors)
+            if form.is_valid():
+                form.save()
+        else:
+            messages.error(request, "Proof of Payment #" + str(obj.id) + " already processed.")
+
+
+@admin.action(description='Mark selected as Rejected')
+def make_rejected_visit(modeladmin, request, queryset):
+    for obj in queryset:
+        if obj.status == "Pending":
+            queryset.update(status='Rejected', isactive='', )
+            messages.success(request, "Visitor Request #" + str(obj.id) + " Rejected.")
+
+            from myResidence.forms import AdminLogsForm
+            date_time = datetime.now()
+            admin = 1
+            tenant = obj.tenant
+            activity = "Visitor"
+            action = "Visitor Request #" + str(obj.id) + " rejected."
+
+            data = {'date_time': date_time, 'admin': admin, 'tenant': tenant, 'activity': activity,
+                    'action': action, 'is_active': 'True', }
+            form = AdminLogsForm(data)
+
+            print(form.errors)
+            if form.is_valid():
+                form.save()
+        else:
+            messages.error(request, "Visitor Request #" + str(obj.id) + " already processed.")
 
 
 @admin.action(description='Mark selected as Paid')
 def make_paid(modeladmin, request, queryset):
-    queryset.update(status='Paid', isactive='', )
+    for obj in queryset:
+        if obj.status != "Paid":
+            queryset.update(status='Paid', isactive='', )
+            messages.success(request, "Billing #" + str(obj.id) + " Successfully Paid.")
+
+            from myResidence.forms import AdminLogsForm
+            date_time = datetime.now()
+            admin = 1
+            tenant = obj.tenant
+            activity = "Billing"
+            action = "Billing #" + str(obj.id) + " updated as paid."
+
+            data = {'date_time': date_time, 'admin': admin, 'tenant': tenant, 'activity': activity,
+                    'action': action, 'is_active': 'True', }
+            form = AdminLogsForm(data)
+
+            print(form.errors)
+            if form.is_valid():
+                form.save()
+        else:
+            messages.error(request, "Billing Record #" + str(obj.id) + " already paid.")
 
 
 @admin.action(description='Mark selected as Overdue')
@@ -133,12 +295,52 @@ def make_resolved(modeladmin, request, queryset):
 
 @admin.action(description='Mark selected as Date Unavailable')
 def make_dateunavailable(modeladmin, request, queryset):
-    queryset.update(status='Date_Unavailable', isactive='True', )
+    for obj in queryset:
+        if obj.status == "Pending":
+            queryset.update(status='Date_Unavailable', isactive='True', )
+            messages.success(request, "Repair Request #" + str(obj.id) + " updated as Date Unavailable.")
+
+            from myResidence.forms import AdminLogsForm
+            date_time = datetime.now()
+            admin = 1
+            tenant = obj.tenant
+            activity = "Repair"
+            action = "Repair Request #" + str(obj.id) + " date unavailable."
+
+            data = {'date_time': date_time, 'admin': admin, 'tenant': tenant, 'activity': activity,
+                    'action': action, 'is_active': 'True', }
+            form = AdminLogsForm(data)
+
+            print(form.errors)
+            if form.is_valid():
+                form.save()
+        else:
+            messages.success(request, "Repair Request #" + str(obj.id) + " already processed.")
 
 
 @admin.action(description='Mark selected as Scheduled')
 def make_scheduled(modeladmin, request, queryset):
-    queryset.update(status='Scheduled', isactive='True', )
+    for obj in queryset:
+        if obj.status == "Pending":
+            queryset.update(status='Scheduled', isactive='True', )
+            messages.success(request, "Repair Request #" + str(obj.id) + " updated as Scheduled.")
+
+            from myResidence.forms import AdminLogsForm
+            date_time = datetime.now()
+            admin = 1
+            tenant = obj.tenant
+            activity = "Repair"
+            action = "Repair Request #" + str(obj.id) + " scheduled."
+
+            data = {'date_time': date_time, 'admin': admin, 'tenant': tenant, 'activity': activity,
+                    'action': action, 'is_active': 'True', }
+            form = AdminLogsForm(data)
+
+            print(form.errors)
+            if form.is_valid():
+                form.save()
+        else:
+            messages.success(request, "Repair Request #" + str(obj.id) + " already processed.")
 
 
 @admin.action(description='Mark selected as Inactive')
@@ -195,7 +397,7 @@ class TenantResource(resources.ModelResource):
         model = Tenant
         fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'contact', 'dateofbirth', 'isactive')
         export_order = (
-        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'contact', 'dateofbirth', 'isactive')
+            'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'contact', 'dateofbirth', 'isactive')
 
 
 class BillingResource(resources.ModelResource):
@@ -208,11 +410,13 @@ class BillingResource(resources.ModelResource):
     class Meta:
         model = Billing
         fields = (
-        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'type', 'billing_fee', 'due_date',
-        'status', 'isactive')
+            'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'type', 'billing_fee',
+            'due_date',
+            'status', 'isactive')
         export_order = (
-        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'type', 'billing_fee', 'due_date',
-        'status', 'isactive')
+            'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'type', 'billing_fee',
+            'due_date',
+            'status', 'isactive')
 
 
 class ProofResource(resources.ModelResource):
@@ -225,9 +429,9 @@ class ProofResource(resources.ModelResource):
     class Meta:
         model = ProofOfPayment
         fields = (
-        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_submitted', 'type', 'status', 'isactive')
+            'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_submitted', 'type', 'status', 'isactive')
         export_order = (
-        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_submitted', 'type', 'status', 'isactive')
+            'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_submitted', 'type', 'status', 'isactive')
 
 
 class VisitorResource(resources.ModelResource):
@@ -241,8 +445,8 @@ class VisitorResource(resources.ModelResource):
         fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'purpose', 'visitor_count',
                   'visitor_names', 'visit_date', 'duration', 'status', 'isactive')
         export_order = (
-        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'purpose', 'visitor_count',
-        'visitor_names', 'visit_date', 'duration', 'status', 'isactive')
+            'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'purpose', 'visitor_count',
+            'visitor_names', 'visit_date', 'duration', 'status', 'isactive')
 
 
 class ReportResource(resources.ModelResource):
@@ -254,11 +458,13 @@ class ReportResource(resources.ModelResource):
     class Meta:
         model = Report
         fields = (
-        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'category', 'details', 'neighbour',
-        'staff', 'status', 'isactive')
+            'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'category', 'details',
+            'neighbour',
+            'staff', 'status', 'isactive')
         export_order = (
-        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'category', 'details', 'neighbour',
-        'staff', 'status', 'isactive')
+            'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'category', 'details',
+            'neighbour',
+            'staff', 'status', 'isactive')
 
 
 class RepairResource(resources.ModelResource):
@@ -272,8 +478,8 @@ class RepairResource(resources.ModelResource):
         fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'category', 'details',
                   'date_available', 'status', 'isactive')
         export_order = (
-        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'category', 'details',
-        'date_available', 'status', 'isactive')
+            'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_issued', 'category', 'details',
+            'date_available', 'status', 'isactive')
 
 
 class AttritionResource(resources.ModelResource):
@@ -285,9 +491,9 @@ class AttritionResource(resources.ModelResource):
     class Meta:
         model = AttritionPrediction
         fields = (
-        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'datetime', 'attrition_probability', 'isactive')
+            'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'datetime', 'attrition_probability', 'isactive')
         export_order = (
-        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'datetime', 'attrition_probability', 'isactive')
+            'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'datetime', 'attrition_probability', 'isactive')
 
 
 class LogsResource(resources.ModelResource):
@@ -299,9 +505,9 @@ class LogsResource(resources.ModelResource):
     class Meta:
         model = LogTenant
         fields = (
-        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_time', 'activity', 'action', 'isactive')
+            'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_time', 'activity', 'action', 'isactive')
         export_order = (
-        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_time', 'activity', 'action', 'isactive')
+            'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'date_time', 'activity', 'action', 'isactive')
 
 
 class ContractResource(resources.ModelResource):
@@ -316,8 +522,8 @@ class ContractResource(resources.ModelResource):
         fields = ('id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'rent', 'late_collection', 'grace_period',
                   'legal_rent', 'deposit', 'months_occupied', 'roommates', 'epayment')
         export_order = (
-        'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'rent', 'late_collection', 'grace_period',
-        'legal_rent', 'deposit', 'months_occupied', 'roommates', 'epayment')
+            'id', 'first_name', 'last_name', 'unit_floor', 'unit_room', 'rent', 'late_collection', 'grace_period',
+            'legal_rent', 'deposit', 'months_occupied', 'roommates', 'epayment')
 
 
 # ADMIN LIST TABLES
@@ -405,8 +611,9 @@ class TenantList(ExportActionMixin, admin.ModelAdmin):
 
 class TenantRegistrationList(ExportActionMixin, admin.ModelAdmin):
     list_display = (
-    'get_name', 'get_unit', 'get_datejoined', 'image_tag', 'username', 'email', 'contact', 'get_dateofbirth', 'status',
-    'get_isactive',)
+        'get_name', 'get_unit', 'get_datejoined', 'image_tag', 'username', 'email', 'contact', 'get_dateofbirth',
+        'status',
+        'get_isactive',)
     list_filter = [ActiveFilter]
     ordering = ('-date_joined',)
 
@@ -442,7 +649,7 @@ class TenantRegistrationList(ExportActionMixin, admin.ModelAdmin):
     get_isactive.boolean = 'isactive'
     image_tag.short_description = 'Image'
 
-    actions = [make_approved_reg, make_rejected]
+    actions = [make_approved_reg, make_rejected_reg]
 
 
 class CustomList(ExportActionMixin, admin.ModelAdmin):
@@ -487,11 +694,11 @@ class BillingTypeList(ExportActionMixin, admin.ModelAdmin):
 
 class BillingList(ExportActionMixin, admin.ModelAdmin):
     list_display = (
-    'get_unit', 'get_dateissued', 'get_name', 'get_billingname', 'get_billingfee', 'get_duedate', 'status',
-    'get_isactive',)
+        'get_unit', 'get_dateissued', 'get_name', 'get_billingname', 'get_billingfee', 'get_duedate', 'status',
+        'get_isactive',)
     list_filter = ('status', 'date_issued', 'due_date')
     search_fields = ['tenant__account__first_name', 'tenant__account__last_name']
-    actions = [make_paid]
+    actions = [make_paid, make_approved_deposit]
     resource_class = BillingResource
 
     def get_unit(self, obj):
@@ -532,11 +739,11 @@ class BillingList(ExportActionMixin, admin.ModelAdmin):
 
 class ProofList(ExportActionMixin, admin.ModelAdmin):
     list_display = (
-    'get_unit', 'get_datesubmitted', 'get_name', 'get_billingname', 'get_billingfee', 'image_tag', 'get_duedate',
-    'status', 'get_isactive',)
+        'get_unit', 'get_datesubmitted', 'get_name', 'get_billingname', 'get_billingfee', 'image_tag', 'get_duedate',
+        'status', 'get_isactive',)
     list_filter = [ActiveFilter]
     ordering = ('date_submitted',)
-    actions = [make_approved_proof, make_rejected]
+    actions = [make_approved_proof, make_rejected_proof]
     resource_class = ProofResource
 
     def get_unit(self, obj):
@@ -646,10 +853,10 @@ class NewsList(ExportActionMixin, admin.ModelAdmin):
 
 class VisitorList(ExportActionMixin, admin.ModelAdmin):
     list_display = (
-    'get_dateissued', 'get_name', 'purpose', 'get_visitdate', 'get_count', 'get_duration', 'status', 'reason',
-    'get_isactive',)
+        'get_dateissued', 'get_name', 'purpose', 'get_visitdate', 'get_count', 'get_duration', 'status', 'reason',
+        'get_isactive',)
     list_filter = [ActiveFilter]
-    actions = [make_approved_false, make_rejected]
+    actions = [make_approved_visit, make_rejected_visit]
     resource_class = VisitorResource
 
     def get_dateissued(self, obj):
@@ -682,8 +889,8 @@ class VisitorList(ExportActionMixin, admin.ModelAdmin):
 
 class ReportList(ExportActionMixin, admin.ModelAdmin):
     list_display = (
-    'ticket_no', 'get_dateissued', 'get_name', 'get_unit', 'get_category', 'get_details', 'image_tag', 'status',
-    'get_isactive',)
+        'ticket_no', 'get_dateissued', 'get_name', 'get_unit', 'get_category', 'get_details', 'image_tag', 'status',
+        'get_isactive',)
     list_filter = ('status', 'category',)
     resource_class = ReportResource
 
@@ -831,8 +1038,8 @@ class LogTenantList(ExportActionMixin, admin.ModelAdmin):
 
 class ContractList(ExportActionMixin, admin.ModelAdmin):
     list_display = (
-    'get_name', 'get_unit', 'rent', 'get_late', 'get_grace', 'get_legal', 'deposit', 'get_months', 'get_mates',
-    'get_epay', 'confirmation')
+        'get_name', 'get_unit', 'rent', 'get_late', 'get_grace', 'get_legal', 'deposit', 'get_months', 'get_mates',
+        'get_epay', 'confirmation')
     resource_class = ContractResource
 
     def get_unit(self, obj):

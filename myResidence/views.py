@@ -276,17 +276,25 @@ def home(request):
     contract = TenantContract.objects.filter(tenant__id=tid, confirmation='None')
 
     if notif:
-        notifctr = LogAdmin.objects.filter(tenant__id=tid, isactive='True').count()
+        notifbilling = LogAdmin.objects.filter(tenant__id=tid, isactive='True', activity='Billing')
+        notifpop = LogAdmin.objects.filter(tenant__id=tid, isactive='True', activity='Proof of Payment')
+        notifvisitor = LogAdmin.objects.filter(tenant__id=tid, isactive='True', activity='Visitor')
+        notifreport = LogAdmin.objects.filter(tenant__id=tid, isactive='True', activity='Report')
+        notifrepair = LogAdmin.objects.filter(tenant__id=tid, isactive='True', activity='Repair')
         notiflast = notif = LogAdmin.objects.filter(tenant__id=tid, isactive='True').latest('date_time')
     else:
-        notifctr = 0
+        notifbilling = ""
+        notifpop = ""
+        notifvisitor = ""
+        notifreport = ""
+        notifrepair = ""
         notiflast = ""
 
     if request.method == 'POST':
         if request.POST.get("form_type") == 'con_notify':
             tenantid = request.POST.get('id')
             LogAdmin.objects.filter(tenant=tenantid, isactive='True').update(isactive='', )
-            return redirect('billings')
+            return redirect('home')
         elif request.POST.get("form_type") == 'con_contract' and request.POST.get("confirmation") == 'Yes':
             tenantid = request.POST.get('id')
             confirmation = request.POST.get('confirmation')
@@ -297,15 +305,18 @@ def home(request):
             messages.warning(request, "Please visit our office with regards to your contract ")
             return redirect('home')
 
-    context = {'announcement': announcement, 'news': news, 'notif': notif, 'notifctr': notifctr, 'notiflast': notiflast, 'contract':contract}
+    context = {'announcement': announcement, 'news': news, 'notif': notif, 'notiflast': notiflast, 'contract':contract,
+               'notifbilling': notifbilling, 'notifpop': notifpop, 'notifvisitor': notifvisitor, 'notifreport': notifreport, 'notifrepair': notifrepair,
+               }
     return render(request, 'tenant/tenant_home.html', context)
 
 
 def contract(request):
     tid = request.user.tenant.id
+    todate = date.today()
     contract_info = TenantContract.objects.filter(tenant__id=tid, confirmation='None')
 
-    context = {'contract': contract_info}
+    context = {'contract': contract_info, 'month':todate.strftime("%B"), 'todate':todate, 'year':todate.strftime("%y"), }
     return render(request, 'tenant/tenant_contract.html', context)
 
 

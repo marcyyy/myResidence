@@ -60,7 +60,7 @@
                                                       <strong>KNOW ALL MEN BY THESE PRESENTS:</strong>
                                                   </p>
                                                   <p>
-                                                      This CONTRACT OF LEASE is made and executed at the City of <input type="text" style="margin: 5px; width: 80px" value="" required >, this day of <input type="text" style="margin: 5px; width: 50px" value="" required>, 20<input type="text" style="margin: 5px; width: 30px" value="" required>, by and between:
+                                                      This CONTRACT OF LEASE is made and executed at the City of <input type="text" style="margin: 5px; width: 80px" value="" required >, this day of <input type="text" style="margin: 5px; width: 100px" value="{{ month }} {{ todate.day }}" required readonly>, 20<input type="text" style="margin: 5px; width: 30px" value="{{ year }}" required readonly>, by and between:
                                                   </p>
                                                   <p style="text-align: center;margin-top:-10px;">
                                                       <br><input type="text" style="margin: 5px; width: 200px" value="" placeholder="Name of Lessor" required>, of legal age, single/married to <input type="text" style="margin: 5px; width: 200px" value="" placeholder="Name of spouse if any" required>,   Filipino, and with residence and postal address at <input type="text" style="margin: 5px; width: 250px" value="" placeholder="Address">, hereinafter referred to as the <strong>LESSOR</strong>.
@@ -126,7 +126,7 @@
                                                   <p>
                                                       <br>Known to me and to me known to be the same persons who executed the foregoing instrument and acknowledged to me that the same is their free and voluntary act and deed.
                                                       <br>
-                                                      <br>This instrument consisting of <input type="text" style="margin: 5px; width: 50px" value="" required> page/s, including the page on which this acknowledgement is written, has been signed on each and every page thereof by the concerned parties and their witnesses, and and sealed with my notarial seal.
+                                                      <br>This instrument consisting of <input type="text" style="margin: 5px; width: 50px" value="1" required> page/s, including the page on which this acknowledgement is written, has been signed on each and every page thereof by the concerned parties and their witnesses, and and sealed with my notarial seal.
                                                       <br>
                                                       <br>WITNESS MY HAND AND SEAL, on the date and place first above written.
                                                       <br>
@@ -138,10 +138,10 @@
                                                   </p>
 
                                                   <p>
-                                                      <br>Doc. No.<input type="text" style="margin: 5px; width: 50px" value="" >;
-                                                      <br>Page No.<input type="text" style="margin: 5px; width: 50px" value="" >;
-                                                      <br>Book No.<input type="text" style="margin: 5px; width: 50px" value="" >;
-                                                      <br>Series of 20<input type="text" style="margin: 5px; width: 50px" value="" >.
+                                                      <br>Doc. No.<input type="text" style="margin: 5px; width: 50px" value="01" >;
+                                                      <br>Page No.<input type="text" style="margin: 5px; width: 50px" value="01" >;
+                                                      <br>Book No.<input type="text" style="margin: 5px; width: 50px" value="01" >;
+                                                      <br>Series of 20<input type="text" style="margin: 5px; width: 50px" value="{{ year }}" >.
                                                       <br>
                                                   </p>
                                            {% endfor %}

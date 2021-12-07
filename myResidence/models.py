@@ -128,7 +128,7 @@ class AccountCustomization(models.Model):
         return self.account.first_name + " " + self.account.last_name
 
     class Meta:
-         
+
         db_table = 'account_customize'
 
 
@@ -148,7 +148,7 @@ class Admin(models.Model):
             return self.account.first_name + " " + self.account.last_name
 
     class Meta:
-         
+
         db_table = 'admin'
 
 
@@ -161,7 +161,7 @@ class TenantUnit(models.Model):
         return str(self.floor) + str(self.room)
 
     class Meta:
-         
+
         db_table = 'tenant_unit'
 
 
@@ -182,7 +182,7 @@ class Tenant(models.Model):
         return self.account.first_name + " " + self.account.last_name
 
     class Meta:
-         
+
         db_table = 'tenants'
 
 
@@ -215,7 +215,7 @@ class TenantRegistration(models.Model):
         return str(self.id)
 
     class Meta:
-         
+
         db_table = 'tenant_registration'
 
 
@@ -233,7 +233,7 @@ class BillingType(models.Model):
         return self.billing_name
 
     class Meta:
-         
+
         db_table = 'billing_type'
 
 
@@ -274,13 +274,13 @@ class Billing(models.Model):
             super().save(*args, **kwargs)
 
             from .forms import AdminLogsForm
-            # unit = self.tenant.unit
             date_time = datetime.now()
+            admin = 1
             tenant = self.tenant
             activity = "Billing"
-            action = "Billing #" + str(self.id)
+            action = " New Billing #" + str(self.id)
 
-            data = {'date_time': date_time, 'tenant': tenant, 'activity': activity, 'action': action, 'is_active': 'True', }
+            data = {'date_time': date_time, 'admin': admin, 'tenant': tenant, 'activity': activity, 'action': action, 'is_active': 'True', }
             form = AdminLogsForm(data)
 
             print(form.errors)
@@ -316,12 +316,13 @@ class Billing(models.Model):
                 idcount = idcount + 1
 
                 from myResidence.forms import AdminLogsForm
+                admin = 1
                 date_time = datetime.now()
                 tenant = self.tenant
                 activity = "Billing"
-                action = "Billing #" + str(self.id)
+                action = " New Billing #" + str(self.id)
 
-                data = {'date_time': date_time, 'tenant': tenant, 'activity': activity, 'action': action,
+                data = {'date_time': date_time, 'admin': admin, 'tenant': tenant, 'activity': activity, 'action': action,
                         'is_active': 'True', }
                 form = AdminLogsForm(data)
 
@@ -331,7 +332,7 @@ class Billing(models.Model):
 
 
     class Meta:
-         
+
         ordering = ['-date_issued']
         db_table = 'billings'
 
@@ -358,7 +359,7 @@ class ProofOfPayment(models.Model):
         return self.billing.billing_type.billing_name
 
     class Meta:
-         
+
         db_table = 'proof_payment'
 
 
@@ -379,7 +380,7 @@ class LogAdmin(models.Model):
         return self.admin.account.first_name + " " + self.admin.account.last_name
 
     class Meta:
-         
+
         db_table = 'log_admin'
 
 
@@ -399,7 +400,7 @@ class LogTenant(models.Model):
         return self.tenant.account.first_name + " " + self.tenant.account.last_name
 
     class Meta:
-         
+
         db_table = 'log_tenants'
 
 
@@ -429,7 +430,7 @@ class Repair(models.Model):
         return self.tenant.account.first_name + " " + self.tenant.account.last_name + " REPAIR TICKET #" + str(self.id)
 
     class Meta:
-         
+
         ordering = ['-date_issued']
         db_table = 'repair'
 
@@ -458,7 +459,7 @@ class Report(models.Model):
         return self.tenant.account.first_name + " " + self.tenant.account.last_name + " REPORT TICKET #" + str(self.id)
 
     class Meta:
-         
+
         ordering = ['-date_issued']
         db_table = 'report'
 
@@ -490,7 +491,7 @@ class Visitor(models.Model):
         return self.tenant.account.first_name + " " + self.tenant.account.last_name + " VISITOR REQUEST #" + str(self.id)
 
     class Meta:
-         
+
         ordering = ['-date_issued']
         db_table = 'visitors'
 
@@ -503,7 +504,7 @@ class TermsAndCondition(models.Model):
         return "myResidence Terms and Conditions"
 
     class Meta:
-         
+
         db_table = 'cms_tnc'
 
 
@@ -523,7 +524,7 @@ class TenantAnnouncement(models.Model):
         return "myResidence Announcements"
 
     class Meta:
-         
+
         db_table = 'cms_announcements'
 
 
@@ -543,7 +544,7 @@ class AnnouncementNew(models.Model):
         return self.headline
 
     class Meta:
-         
+
         ordering = ['-datepublished']
         db_table = 'cms_news'
 
@@ -563,7 +564,7 @@ class AttritionPrediction(models.Model):
         return self.tenant.account.first_name + " " + self.tenant.account.last_name
 
     class Meta:
-         
+
         db_table = 'tenant_attrition'
 
 
@@ -581,5 +582,5 @@ class TenantContract(models.Model):
     confirmation = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
-         
+
         db_table = 'tenant_contract'
