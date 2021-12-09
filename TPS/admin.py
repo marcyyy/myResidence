@@ -11,6 +11,8 @@ from myResidence.models import *
 from import_export.admin import ExportActionMixin
 from import_export import resources
 from import_export.fields import Field
+from .sites import admin_site
+
 
 # run functions
 for each in TenantUnit.objects.all():
@@ -1083,20 +1085,21 @@ class ContractList(ExportActionMixin, admin.ModelAdmin):
 
 
 # ADMIN TABLE REGISTER
-admin.site.register(Admin, AdminList)
-admin.site.register(TenantUnit, TenantUnitList)
-admin.site.register(Tenant, TenantList)
-admin.site.register(TenantRegistration, TenantRegistrationList)
-admin.site.register(AccountCustomization, CustomList)
-admin.site.register(BillingType, BillingTypeList)
-admin.site.register(Billing, BillingList)
-admin.site.register(ProofOfPayment, ProofList)
-admin.site.register(TermsAndCondition, TncList)
-admin.site.register(TenantAnnouncement, AnnouncementList)
-admin.site.register(AnnouncementNew, NewsList)
-admin.site.register(Visitor, VisitorList)
-admin.site.register(Report, ReportList)
-admin.site.register(Repair, RepairList)
-admin.site.register(AttritionPrediction, AttritionList)
-admin.site.register(LogTenant, LogTenantList)
-admin.site.register(TenantContract, ContractList)
+admin_site.register(Admin, AdminList)
+admin_site.register(TenantUnit, TenantUnitList)
+admin_site.register(Tenant, TenantList)
+admin_site.register(TenantRegistration, TenantRegistrationList)
+admin_site.register(AccountCustomization, CustomList)
+admin_site.register(BillingType, BillingTypeList)
+admin_site.register(Billing, BillingList)
+admin_site.register(ProofOfPayment, ProofList)
+admin_site.register(TermsAndCondition, TncList)
+admin_site.register(TenantAnnouncement, AnnouncementList)
+admin_site.register(AnnouncementNew, NewsList)
+admin_site.register(Visitor, VisitorList)
+admin_site.register(Report, ReportList)
+admin_site.register(Repair, RepairList)
+admin_site.register(AttritionPrediction, AttritionList)
+admin_site.register(LogTenant, LogTenantList)
+admin_site.register(TenantContract, ContractList)
+
