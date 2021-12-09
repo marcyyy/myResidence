@@ -259,6 +259,7 @@ class Billing(models.Model):
                                 default=ACTIVE[0][0])  # Field name made lowercase.
 
     def __str__(self):
+
         return self.tenant.account.first_name + " " + self.tenant.account.last_name + " | " + self.billing_type.billing_code
 
     def save(self, *args, **kwargs):
