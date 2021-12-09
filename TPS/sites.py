@@ -1,17 +1,18 @@
 from django.contrib.admin import AdminSite
 from django.template.response import TemplateResponse
 from django.views.decorators.cache import never_cache
-from myResidence.models import *
-from myResidence.forms import BillingForm
-from datetime import datetime, date, timedelta
-from dateutil import relativedelta
-from dateutil.relativedelta import relativedelta
-from django.contrib import messages
 
 
 class MyAdminSite(AdminSite):
     @never_cache
     def index(self, request, extra_context=None):
+        from myResidence.models import TenantRegistration, Tenant, TenantUnit, TenantContract, ProofOfPayment, Report, \
+            Repair, Visitor, Billing, BillingType
+        from myResidence.forms import BillingForm
+        from datetime import datetime, date, timedelta
+        from dateutil import relativedelta
+        from dateutil.relativedelta import relativedelta
+        from django.contrib import messages
         def is_leap_year(year):
             if year % 100 == 0:
                 return year % 100 == 0
