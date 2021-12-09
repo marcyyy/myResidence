@@ -86,7 +86,7 @@ def make_approved_deposit(modeladmin, request, queryset):
                 remain_dep = init_dep - billing_fee
 
                 if remain_dep > 0:
-                    Billing.objects.filter(id=obj.id).update(status='Paid (Deposit)', isactive='', )
+                    Billing.objects.filter(id=obj.id).update(status='Paid', isactive='', )
                     TenantContract.objects.filter(tenant=obj.tenant).update(deposit=remain_dep)
 
                     from myResidence.forms import AdminLogsForm
