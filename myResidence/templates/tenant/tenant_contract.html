@@ -49,7 +49,6 @@
   </head>
   <body id='contract-whole'>
 
-                               {% for each in contract %}
                                    <form method="POST" enctype="multipart/form-data" class="needs-validation" style="padding:50px" >
                                             <div class="contract-info" id="html-content" style="padding:10px 20px 20px 20px">
                                                     {% csrf_token %}
@@ -68,7 +67,7 @@
 
                                                   <h4 style="">-AND-</h4>
                                                   <p style="text-align: center;">
-                                                        <input type="text" style="margin: 5px; width: 200px" value="" id="lessee1" onkeyup="selectChange(event)" placeholder="Name of Lessee" required>, Filipino and with residence and postal address at <input type="text" style="margin: 5px; width: 250px" value="" placeholder="Address" required>, hereinafter referred to as the <strong>LESSEE</strong>.
+                                                        <input type="text" style="margin: 5px; width: 200px" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly id="lessee1" placeholder="Name of Lessee" required>, Filipino and with residence and postal address at <input type="text" style="margin: 5px; width: 250px" value="" placeholder="Address" required>, hereinafter referred to as the <strong>LESSEE</strong>.
                                                         <br><br>
                                                   </p>
 
@@ -98,7 +97,7 @@
                                                   </p>
 
                                                    <p style="text-align: center">
-                                                      <br><input type="text" style="margin: 5px; width: 200px" value="" placeholder="Name of Lessor" required>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" style="margin: 5px; width: 200px" value="" placeholder="Name of Lessee" id="lessee2" required>
+                                                      <br><input type="text" style="margin: 5px; width: 200px" value="" placeholder="Name of Lessor" required>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" style="margin: 5px; width: 200px" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly placeholder="Name of Lessee" id="lessee2" required>
                                                       <br>LESSOR&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LESSEE
                                                       <br>
                                                       <br>Signed in the presence of:
@@ -121,7 +120,7 @@
                                                       Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CTC Number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date/Place Issued
                                                       <br>
                                                       <br><input type="text" style="margin: 5px; width: 200px" value="" placeholder="Name of Lessor" required> 10000000 <input type="text" style="margin: 5px; width: 100px" value="" required> / <input type="text" style="margin: 5px; width: 100px" value="" required>
-                                                      <br><input type="text" style="margin: 5px; width: 200px" value="" placeholder="Name of Lessee"  id="lessee3"  required> 10000000 <input type="text"style="margin: 5px; width: 100px" value="" required> / <input type="text" style="margin: 5px; width: 100px" value="" required>
+                                                      <br><input type="text" style="margin: 5px; width: 200px" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly placeholder="Name of Lessee"  id="lessee3"  required> 10000000 <input type="text"style="margin: 5px; width: 100px" value="" required> / <input type="text" style="margin: 5px; width: 100px" value="" required>
                                                       <br>
                                                   </p>
 
@@ -146,7 +145,6 @@
                                                       <br>Series of 20<input type="text" style="margin: 5px; width: 50px" value="{{ year }}" >.
                                                       <br>
                                                   </p>
-                                           {% endfor %}
                                       </div>
 
 
@@ -174,11 +172,6 @@
 
         function CreatePDFfromHTML() {
             alert("WIP (Prints contract as PDF)");
-        }
-
-        function selectChange(e) {
-          document.getElementById("lessee2").value = e.value;
-          document.getElementById("lessee3").value = e.value;
         }
 
         var loadFile = function(event) {

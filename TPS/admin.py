@@ -14,6 +14,10 @@ from import_export.fields import Field
 from .sites import admin_site
 
 
+class TPSAdminLogin(admin.AdminSite):
+    login_template = 'myResidence/templates/registration/login.html'
+
+
 # run functions
 for each in TenantUnit.objects.all():
     tuctr = Tenant.objects.filter(unit__id=each.id).count()
@@ -1038,6 +1042,22 @@ class LogTenantList(ExportActionMixin, admin.ModelAdmin):
     get_unit.short_description = 'Tenant Unit'
 
 
+class LogAdminList(ExportActionMixin, admin.ModelAdmin):
+    list_display = ('get_tenant', 'get_datetime', 'activity', 'action',)
+    list_filter = ('activity',)
+    # resource_class = AdminLogsResource
+
+    def get_tenant(self, obj):
+        return obj.tenant.account.first_name + " " + obj.tenant.account.last_name
+
+    def get_datetime(self, obj):
+        return obj.date_time
+
+    get_datetime.admin_order_field = 'date_time'
+    get_datetime.short_description = 'Date and Time'
+    get_tenant.short_description = 'Tenant Name'
+
+
 class ContractList(ExportActionMixin, admin.ModelAdmin):
     list_display = (
         'get_name', 'get_unit', 'rent', 'get_late', 'get_grace', 'get_legal', 'deposit', 'get_months', 'get_mates',
@@ -1101,5 +1121,6 @@ admin.site.register(Report, ReportList)
 admin.site.register(Repair, RepairList)
 admin.site.register(AttritionPrediction, AttritionList)
 admin.site.register(LogTenant, LogTenantList)
+admin.site.register(LogAdmin, LogAdminList)
 admin.site.register(TenantContract, ContractList)
 

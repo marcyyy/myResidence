@@ -327,10 +327,6 @@ def home(request):
             LogAdmin.objects.filter(tenant=tenantid, isactive='True').update(isactive='', )
             return redirect('home')
         elif request.POST.get("form_type") == 'con_contract' and request.POST.get("confirmation") == 'Yes':
-            tenantid = request.POST.get('id')
-            confirmation = request.POST.get('confirmation')
-            # TenantContract.objects.filter(tenant=tenantid).update(confirmation=confirmation, )
-            messages.success(request, "Your Contract has now been confirmed. Thank you for your time.")
             return redirect('contract')
         elif request.POST.get("form_type") == 'con_contract' and request.POST.get("confirmation") == 'No':
             messages.warning(request, "Please visit our office with regards to your contract ")
@@ -345,9 +341,16 @@ def home(request):
 def contract(request):
     tid = request.user.tenant.id
     todate = date.today()
-    contract_info = TenantContract.objects.filter(tenant__id=tid, confirmation='None')
 
-    context = {'contract': contract_info, 'month':todate.strftime("%B"), 'todate':todate, 'year':todate.strftime("%y"), }
+    if request.method == 'POST':
+        tenantid = request.POST.get('id')
+        confirmation = "Yes"
+        TenantContract.objects.filter(tenant=tenantid).update(confirmation=confirmation, )
+
+        messages.success(request, "Your Contract has now been confirmed. Thank you for your time.")
+        return redirect('home')
+
+    context = {'month':todate.strftime("%B"), 'todate':todate, 'year':todate.strftime("%y"), }
     return render(request, 'tenant/tenant_contract.html', context)
 
 
