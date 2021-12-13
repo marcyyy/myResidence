@@ -18,6 +18,7 @@ from . import views
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from .admin import admin_login
 
 
 urlpatterns = [
@@ -25,6 +26,7 @@ urlpatterns = [
     path('', views.index),
     path('', include('myResidence.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
+    path('admin/', admin_login.urls, name='login_admin'),
 ]
 
 

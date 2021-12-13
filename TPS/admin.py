@@ -11,11 +11,18 @@ from myResidence.models import *
 from import_export.admin import ExportActionMixin
 from import_export import resources
 from import_export.fields import Field
+from django.db import models
+from django.contrib.auth.models import User, Group
 from .sites import admin_site
 
 
 class TPSAdminLogin(admin.AdminSite):
-    login_template = 'myResidence/templates/registration/login.html'
+    login_template = 'TPS/templates/registration/login.html'
+
+
+admin_login = TPSAdminLogin(name='LoginAdmin')
+
+# admin_login.register(User)
 
 
 # run functions

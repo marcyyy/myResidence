@@ -68,7 +68,7 @@ ROOT_URLCONF = 'TPS.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), ]
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -88,14 +88,14 @@ WSGI_APPLICATION = 'TPS.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    #'default': {
+    # 'default': {
     #    'ENGINE': 'django.db.backends.mysql',
     #    'NAME': 'tpsdb',
     #    'HOST': '127.0.0.1',
     #    'USER': 'root',
     #    'PASSWORD': '',
     #    'PORT': '3306',
-    #}
+    # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'tpsdb',
@@ -217,7 +217,7 @@ JAZZMIN_SETTINGS = {
     # Copyright on the footer
     "copyright": "AIJM Developers ",
 
-    "hide_models" : "myResidence.accountcustomization",
+    "hide_models": "myResidence.accountcustomization",
 
     "topmenu_links": [
         {"name": "Reports & Analytics", "url": "report"},
@@ -230,7 +230,7 @@ JAZZMIN_SETTINGS = {
         "myResidence.billing", "myResidence.billingtype", "myResidence.proofofpayment",
         "auth.user", "myResidence.admin", "myResidence.tenant", "myResidence.tenantregistration",
         "myResidence.tenantunit", "myResidence.termsandcondition", "myResidence.tenantannouncement",
-        "myResidence.announcementnew","myResidence.logtenant", "myResidence.logadmin"],
+        "myResidence.announcementnew", "myResidence.logtenant", "myResidence.logadmin"],
 
     "icons": {
         "admin.index": "fas fa-id-card",
@@ -298,6 +298,5 @@ JAZZMIN_UI_TWEAKS = {
 }
 
 import django_heroku
+
 django_heroku.settings(locals())
-
-

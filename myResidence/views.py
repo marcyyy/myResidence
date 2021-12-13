@@ -260,7 +260,6 @@ def loginadmin(request):
     return render(request, 'registration/login.html', context)
 
 
-
 def logoutpage(request):
     if request.user.is_anonymous is True:
         return redirect('login')

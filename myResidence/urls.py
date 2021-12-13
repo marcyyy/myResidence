@@ -2,11 +2,11 @@ from django.contrib import admin
 from django.conf.urls import url
 from django.urls import path, include, re_path
 from . import views
+from TPS.admin import admin_login
 
 urlpatterns = [
     path('tenant/register', views.register, name='register'),
     path('tenant/login', views.loginpage, name='login'),
-    path('registration/login', views.loginadmin, name='login_admin'),
     path('tenant/logout', views.logoutpage , name='logout'),
     path('tenant/home', views.home, name='home'),
     path('tenant/billings', views.billings, name='billings'),
@@ -26,5 +26,6 @@ urlpatterns = [
     url('admin/myResidence/admin/(?P<pk>\d+)/change', views.admin_change, name='admin_change'),
     path('analytics/report', views.report, name='report'),
     path('analytics/attrition', views.attrition, name='attrition'),
+    path('landlord/', views.loginadmin, name='login_admin'),
 ]
 
