@@ -26,6 +26,6 @@ urlpatterns = [
     url('admin/myResidence/admin/(?P<pk>\d+)/change', views.admin_change, name='admin_change'),
     path('analytics/report', views.report, name='report'),
     path('analytics/attrition', views.attrition, name='attrition'),
-    path('landlord/', views.loginadmin, name='login_admin'),
+    path('landlord/login/', views.loginadmin, name='login_admin'),
 ]
 
