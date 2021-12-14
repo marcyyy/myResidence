@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.conf.urls import url
 from django.urls import path, include, re_path
 from . import views
+from django.conf.urls.static import static
+from django.conf import settings
 from TPS.admin import admin_login
 
 urlpatterns = [
@@ -26,6 +28,8 @@ urlpatterns = [
     url('admin/myResidence/admin/(?P<pk>\d+)/change', views.admin_change, name='admin_change'),
     path('analytics/report', views.report, name='report'),
     path('analytics/attrition', views.attrition, name='attrition'),
-    path('landlord/login/', views.loginadmin, name='login_admin'),
+    path('landlord/login/', views.loginadmin, name='login_landlord'),
+    path('admin/login/', admin_login.urls, name='login_admin'),
+
 ]
 

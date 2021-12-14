@@ -26,7 +26,7 @@ urlpatterns = [
     path('', views.index),
     path('', include('myResidence.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
-    path('admin/login/', admin_login.urls, name='login_admin'),
+    # path('admin/login/', admin_login.urls, name='login_admin'),
 ]
 
 

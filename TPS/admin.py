@@ -17,7 +17,7 @@ from .sites import admin_site
 
 
 class TPSAdminLogin(admin.AdminSite):
-    login_template = 'TPS/templates/registration/login.html'
+    login_template = 'myResidence/templates/registration/login.html'
 
 
 admin_login = TPSAdminLogin(name='LoginAdmin')
