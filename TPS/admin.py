@@ -1111,6 +1111,33 @@ class ContractList(ExportActionMixin, admin.ModelAdmin):
     get_unit.short_description = 'Tenant Unit'
 
 
+class LeaseList(ExportActionMixin, admin.ModelAdmin):
+    list_display = (
+        'get_name', 'get_unit', 'get_ctc', 'get_date', 'lease_agreement')
+
+    def get_unit(self, obj):
+        return str(obj.tenant.unit.floor) + str(obj.tenant.unit.room)
+
+    def get_name(self, obj):
+        return obj.tenant.account.first_name + " " + obj.tenant.account.last_name
+
+    def get_ctc(self, obj):
+        return obj.ctc_number
+
+    def get_date(self, obj):
+        return obj.date_signed
+
+    def lease_agreement(self, obj):
+        url_contract = 'tenant/tenant_contract_ud.html'
+        return format_html('<a href="{}">View Lease Contract<a/>'.format(url_contract))
+
+    get_name.short_description = 'Tenant Name'
+    get_unit.short_description = 'Tenant Unit'
+    get_ctc.short_description = 'CTC Number'
+    get_date.short_description = 'Date Signed'
+    lease_agreement.short_description = 'View Lease Contract'
+
+
 # ADMIN TABLE REGISTER
 admin.site.register(Admin, AdminList)
 admin.site.register(TenantUnit, TenantUnitList)
@@ -1130,4 +1157,5 @@ admin.site.register(AttritionPrediction, AttritionList)
 admin.site.register(LogTenant, LogTenantList)
 admin.site.register(LogAdmin, LogAdminList)
 admin.site.register(TenantContract, ContractList)
+admin.site.register(TenantLease, LeaseList)
 

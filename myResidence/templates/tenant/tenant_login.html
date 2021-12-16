@@ -65,6 +65,27 @@
 
       <div class="container rounded-3 " style="box-shadow: 0 7px 50px 0 rgba(0, 0, 0, 0.29)">
 
+
+    {% for message in messages %}
+        {% if message.tags == 'success' %}
+    <div class='alert alert-success alert-dismissible'>
+    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+        {{message}}
+    </div>
+        {% elif message.tags == 'error' %}
+    <div class='alert alert-danger alert-dismissible'>
+    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+        {{message}}
+    </div>
+        {% elif message.tags == 'warning' %}
+    <div class='alert alert-warning alert-dismissible'>
+    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+        {{message}}
+    </div>
+        {% endif %}
+    {% endfor %}
+
+
                   <div class="row center-align" style="display: table; ">
 
                       <div class="col-md-4 rounded-3" style="height: 500px; display: table-cell; vertical-align: middle; width: 600px; padding-right:60px ">

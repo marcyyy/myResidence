@@ -76,11 +76,16 @@ def register(request):
 
     if request.method == 'POST':
         regform = TenantRegistrationForm(request.POST)
+        un = request.POST.get('username')
         print(regform.errors)
         if regform.is_valid():
-            regform.save()
-            messages.warning(request, 'We will now verify your Tenant Account Validation.')
-            return redirect('login')
+            if User.objects.filter(username=un).exists():
+                messages.error(request, "Username already taken.")
+                return redirect('register')
+            else:
+                regform.save()
+                messages.warning(request, 'We will now verify your Tenant Account Validation.')
+                return redirect('login')
         else:
             return redirect('register')
 
@@ -326,6 +331,9 @@ def home(request):
             LogAdmin.objects.filter(tenant=tenantid, isactive='True').update(isactive='', )
             return redirect('home')
         elif request.POST.get("form_type") == 'con_contract' and request.POST.get("confirmation") == 'Yes':
+            # tenantid = request.POST.get('id')
+            # confirmation = request.POST.get('confirmation')
+            # TenantContract.objects.filter(tenant=tenantid).update(confirmation=confirmation, )
             return redirect('contract')
         elif request.POST.get("form_type") == 'con_contract' and request.POST.get("confirmation") == 'No':
             messages.warning(request, "Please visit our office with regards to your contract ")
@@ -340,17 +348,49 @@ def home(request):
 def contract(request):
     tid = request.user.tenant.id
     todate = date.today()
+    landlord = User.objects.get(username="Landlord")
 
     if request.method == 'POST':
-        tenantid = request.POST.get('id')
-        confirmation = "Yes"
-        TenantContract.objects.filter(tenant=tenantid).update(confirmation=confirmation, )
+        tenantid = request.POST.get('tenant_id')
 
-        messages.success(request, "Your Contract has now been confirmed. Thank you for your time.")
-        return redirect('home')
+        # if TenantLease.objects.filter(tenant__id=tenantid).exists():
+        if request.method == 'POST':
+            form = LeaseForm(request.POST, request.FILES)
+            tenant_id = Tenant.objects.get(id=tid)
+            print(form.errors)
+            if form.is_valid():
+                form.save()
 
-    context = {'month':todate.strftime("%B"), 'todate':todate, 'year':todate.strftime("%y"), }
+                date_time = datetime.now()
+                activity = "Contract"
+                action = "Lease Contract Signed"
+
+                data1 = {'date_time': date_time, 'tenant': tenant_id.id, 'activity': activity, 'action': action,
+                         'is_active': 'True', }
+                form1 = TenantLogsForm(data1)
+
+                print(form1.errors)
+                if form1.is_valid():
+                    form1.save()
+                else:
+                    messages.error(request, "Tenant Log failed.")
+
+                TenantContract.objects.filter(tenant=tenant_id).update(confirmation='Yes', )
+                messages.success(request, "Your Contract has now been confirmed. Thank you for your time.")
+                return redirect('home')
+            else:
+                messages.error(request, 'Contract Sign failed.')
+                return redirect('contract')
+
+    context = {'month':todate.strftime("%B"), 'todate':todate, 'year':todate.strftime("%y"), 'landlord':landlord}
     return render(request, 'tenant/tenant_contract.html', context)
+
+
+def contract_ud(request):
+    contract_lease = TenantLease.objects.filter(tenant=request.user.tenant)
+
+    context = {'lease':contract_lease}
+    return render(request, 'tenant/tenant_contract_ud.html', context)
 
 
 def billings(request):
@@ -412,9 +452,10 @@ def profile(request):
     logs2 = LogTenant.objects.filter(tenant_id=tid).order_by('-date_time')
     recount = LogTenant.objects.filter(tenant_id=tid).count()
     roomies = Tenant.objects.filter(unit=uid, isactive='True')
+    lease = TenantLease.objects.filter(tenant_id=tid)
 
     datejoin = request.user.date_joined.date()
-    context = {'datejoin': datejoin, 'roomies': roomies, 'logs': logs, 'logs2': logs2, 'recount': recount, }
+    context = {'datejoin': datejoin, 'roomies': roomies, 'logs': logs, 'logs2': logs2, 'recount': recount, 'lease':lease}
     return render(request, 'tenant/tenant_profile.html', context)
 
 

@@ -49,26 +49,24 @@
   </head>
   <body id='contract-whole'>
 
-                                   <form method="POST" enctype="multipart/form-data" class="needs-validation" style="padding:50px" >
+                                   <form method="POST" enctype="multipart/form-data" class="needs-validation" style="padding:50px" novalidate >
                                             <div class="contract-info" id="html-content" style="padding:10px 20px 20px 20px">
                                                     {% csrf_token %}
-                                                               <input type="hidden" name="tenant" value="{{ request.user.tenant.id }}">
-                                                               <input type="hidden" name="landlord" value="{{ landlord.id }}">
-
+                                            {% for each in lease %}
                                                   <h4 style="margin-bottom: 50px">LEASE CONTRACT</h4>
                                                   <p style="margin-bottom: 5px">
                                                       <strong>KNOW ALL MEN BY THESE PRESENTS:</strong>
                                                   </p>
                                                   <p>
-                                                      This CONTRACT OF LEASE is made and executed at the City of <input type="text" style="margin: 5px; width: 80px" value="Manila" required readonly >, this day of <input type="text" style="margin: 5px; width: 100px" name="day_signed" value="{{ month }} {{ todate.day }}" required readonly>, 20<input type="text" style="margin: 5px; width: 30px" name="year_signed" value="{{ year }}" required readonly>, by and between:
+                                                      This CONTRACT OF LEASE is made and executed at the City of <input type="text" style="margin: 5px; width: 80px" value="Manila" required readonly >, this day of <input type="text" style="margin: 5px; width: 100px" value="{{ each.day_signed }}" required readonly>, 20<input type="text" style="margin: 5px; width: 30px" value="{{ each.year_signed }}" required readonly>, by and between:
                                                   </p>
                                                   <p style="text-align: center;margin-top:-10px;">
-                                                      <br><input type="text" style="margin: 5px; width: 200px" value="{{ landlord.first_name }} {{ landlord.last_name }}" placeholder="Name of Lessor" required readonly>, of legal age, single/married to <input type="text" style="margin: 5px; width: 200px" value="N/A" placeholder="Name of spouse if any" readonly required>,   Filipino, and with residence and postal address at <input type="text" style="margin: 5px; width: 250px" name="lease_address" value="1016 Sta.Mesa, Manila" placeholder="Address" readonly>, hereinafter referred to as the <strong>LESSOR</strong>.
+                                                      <br><input type="text" style="margin: 5px; width: 200px" value="{{ each.landlord.first_name }} {{ each.landlord.last_name }}" placeholder="Name of Lessor" required readonly>, of legal age, single/married to <input type="text" style="margin: 5px; width: 200px" value="N/A" placeholder="Name of spouse if any" readonly required>,   Filipino, and with residence and postal address at <input type="text" style="margin: 5px; width: 250px" name="lease_address" value="1016 Sta.Mesa, Manila" placeholder="Address" readonly>, hereinafter referred to as the <strong>LESSOR</strong>.
                                                   </p>
 
                                                   <h4 style="">-AND-</h4>
                                                   <p style="text-align: center;">
-                                                        <input type="text" style="margin: 5px; width: 200px" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly id="lessee1" placeholder="Name of Lessee" required>, Filipino and with residence and postal address at <input type="text" style="margin: 5px; width: 350px" value="" id="tenant_add" placeholder="Address" name="tenant_address" required>, hereinafter referred to as the <strong>LESSEE</strong>.
+                                                        <input type="text" style="margin: 5px; width: 200px" value="{{ each.tenant.account.first_name }} {{ each.tenant.account.last_name }}" readonly id="lessee1" placeholder="Name of Lessee" required>, Filipino and with residence and postal address at <input type="text" style="margin: 5px; width: 350px" value="{{ each.tenant_address }}" readonly placeholder="Address" name="tenant_address" required>, hereinafter referred to as the <strong>LESSEE</strong>.
                                                         <br><br>
                                                   </p>
 
@@ -98,16 +96,16 @@
                                                   </p>
 
                                                    <p style="text-align: center">
-                                                      <br><input type="text" style="margin: 5px; width: 200px" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly placeholder="Name of Lessee" id="lessee2" required>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" style="margin: 5px; width: 200px" value="{{ landlord.first_name }} {{ landlord.last_name }}" placeholder="Name of Lessor" required>
+                                                      <br><input type="text" style="margin: 5px; width: 200px" value="{{ each.tenant.account.first_name }} {{ each.tenant.account.last_name }}" readonly placeholder="Name of Lessee" id="lessee2" required>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" style="margin: 5px; width: 200px" value="{{ each.landlord.first_name }} {{ each.landlord.last_name }}" placeholder="Name of Lessor" required>
                                                       <br>LESSEE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LESSOR
                                                       <br>
                                                       <br>Signed in the presence of:
                                                       <br>
-                                                      <br><img class="udimg" id="output" width="200" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img class="udimg2" src="{% static '/images/signature.png' %}" id="output2" width="200" />
+                                                      <br><img class="udimg" src="{{ each.tenant_signature.url }}" id="output" width="200" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img class="udimg2" src="{% static '/images/signature.png' %}" id="output2" width="200" />
                                                        <br><p style="text-align: center;" id="underlineimg">_____________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;______________________________</p>
-                                                      <br><p style="text-align: center"><label for="file" style="cursor: pointer;" id="uploadimg">(Upload E-Signature)</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label id="uploadimg2">Lessor E-Signature</label></p>
-                                                      <br><input type="file" accept="image/*" id="file" name="tenant_signature" onchange="loadFile(event)" style="display: none;" required> <input type="file"  accept="image/*" name="image2" id="file2"  onchange="loadFile2(event)" style="display: none;">
-                                                  </p>
+                                                      <br><p style="text-align: center"><label for="file" id="uploadimg">Lessee E-Signature</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<label id="uploadimg2">Lessor E-Signature</label></p>
+                                                      <br
+                                                </p>
 
                                                   <h4 style="margin-top: 40px">ACKNOWLEDGEMENT</h4>
                                                   <p>
@@ -120,8 +118,8 @@
                                                   <p style="text-align: center">
                                                       Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CTC Number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Date/Place Issued
                                                       <br>
-                                                      <br><input type="text" style="margin: 5px; width: 200px" value="{{ landlord.first_name }} {{ landlord.last_name }}" placeholder="Name of Lessor" readonly> <input type="text" value="" id="ctc_num" name="ctc_number" style="margin: 5px; width: 100px" readonly><input type="text" style="margin: 5px; width: 100px" value="{{ todate }}" name="date_signed" readonly> / <input type="text" style="margin: 5px; width: 100px" value="Manila" readonly>
-                                                      <br><input type="text" style="margin: 5px; width: 200px" value="{{ request.user.first_name }} {{ request.user.last_name }}" readonly placeholder="Name of Lessee"  id="lessee3"  readonly><input type="text" value="" id="ctc_num2" style="margin: 5px; width: 100px" readonly><input type="text"style="margin: 5px; width: 100px" value="{{ todate }}" readonly> / <input type="text" style="margin: 5px; width: 100px" value="Manila" readonly>
+                                                      <br><input type="text" style="margin: 5px; width: 200px" value="{{ each.landlord.first_name }} {{ each.landlord.last_name }}" placeholder="Name of Lessor" readonly> <input type="text" value="{{ each.ctc_number }}" id="ctc_num" name="ctc_number"  style="margin: 5px; width: 100px" readonly><input type="text" style="margin: 5px; width: 100px" value="{{ each.date_signed }}" name="date_signed" readonly> / <input type="text" style="margin: 5px; width: 100px" value="Manila" readonly>
+                                                      <br><input type="text" style="margin: 5px; width: 200px" value="{{ each.tenant.account.first_name }} {{ each.tenant.account.last_name }}" readonly placeholder="Name of Lessee"  id="lessee3"  readonly><input type="text" value="{{ each.ctc_number }}" id="ctc_num2" style="margin: 5px; width: 100px" readonly><input type="text"style="margin: 5px; width: 100px" value="{{ each.date_signed }}" readonly> / <input type="text" style="margin: 5px; width: 100px" value="Manila" readonly>
                                                       <br>
                                                   </p>
 
@@ -143,13 +141,16 @@
                                                       <br>Doc. No.<input type="text" style="margin: 5px; width: 50px" value="00" readonly>;
                                                       <br>Page No.<input type="text" style="margin: 5px; width: 50px" value="00" readonly>;
                                                       <br>Book No.<input type="text" style="margin: 5px; width: 50px" value="00" readonly>;
-                                                      <br>Series of 20<input type="text" style="margin: 5px; width: 50px" value="{{ year }}" readonly>.
+                                                      <br>Series of 20<input type="text" style="margin: 5px; width: 50px" value="{{ each.year_signed }}" readonly>.
                                                       <br>
                                                   </p>
                                       </div>
 
 
-                                          <div class="modal-footer justify-content-between" style="margin-top:25px; padding:50px">
+                                          <div class="modal-footer" style="margin-top:25px; padding:50px">
+
+                                                                <button type="button" onclick="history.back()" class="btn btn-secondary">Back</button>
+
                                                                 <button type="button" class="btn btn-warning" id="cmd"
                                                                         onclick="printJS(
                                                                             {
@@ -158,16 +159,11 @@
                                                                                 documentTitle: 'Lease Contract',
                                                                                 onPrintDialogClose: 'Success',
                                                                                 ignoreElements: ['uploadimg','uploadimg2','underlineimg'],
-                                                                                style:' .contract-info{background-color: #ffffff;}input{text-align:center;background-color: #fcfcfc; border:0; border-bottom:2px solid lightgrey;}.contract-info input{font-size:15px;font-family: Times New Roman;}.contract-info h4{font-size: 20px;text-align: center;font-weight: bold;}.contract-info p{text-align:justify}.udimg{margin-bottom:-170px}.udimg2{margin-bottom:-100px}'
+                                                                                style:' .contract-info{background-color: #ffffff;}input{text-align:center;background-color: #fcfcfc; border:0; border-bottom:2px solid lightgrey;}.contract-info input{font-size:15px;font-family: Times New Roman;}.contract-info h4{font-size: 20px;text-align: center;font-weight: bold;}.contract-info p{text-align:justify}.udimg{margin-bottom:-100px}.udimg2{margin-bottom:-100px}'
                                                                             })">
                                                                     Generate PDF
                                                                 </button>
-
-                                                             <div>
-                                                                <a style="text-decoration: none; margin-right:10px" href="{% url 'home' %}"><button type="button" class="btn btn-secondary">Back</button></a>
-
-                                                                <button class=" btn btn-primary" id="submit" type="submit" style="width: 100px">Submit</button>
-                                                            </div>
+                                              {% endfor %}
                                           </div>
 
                                    </form>
@@ -189,24 +185,6 @@
             var image2 = document.getElementById('output2');
             image2.src = URL.createObjectURL(event.target.files[0]);
         };
-
-        var min = 10000000;
-        var max = 0;
-        var num = Math.floor(Math.random() * min) + max;
-        document.getElementById("ctc_num").value = num;
-        document.getElementById("ctc_num2").value = num;
-
-        $('#submit').click(function(){
-           if(document.getElementById("file").value.length === 0 && document.getElementById("tenant_add").value.length === 0 ){
-              alert('Please Input your address & Upload your e-signature.');
-           }
-           if(document.getElementById("file").value.length === 0  && document.getElementById("tenant_add").value.length > 0){
-              alert('Please Upload your e-signature.');
-           }
-           if(document.getElementById("file").value.length > 0  && document.getElementById("tenant_add").value.length === 0){
-              alert('Please Input your address.');
-           }
-        });
 
     </script>
 

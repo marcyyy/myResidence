@@ -114,6 +114,16 @@ def ad_upload(instance, filename):
     return os.path.join(upload_to, filename)
 
 
+def sign_upload(instance, filename):
+    upload_to = 'static/uploaded/signature/tenant/'
+    ext = filename.split('.')[-1]
+
+    filename = '{}.{}'.format( "signature_" + instance.tenant.account.username + "_" + uuid4().hex , ext)
+
+    # return the whole path to the file
+    return os.path.join(upload_to, filename)
+
+
 # TPS Models
 class AccountCustomization(models.Model):
     account = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -571,3 +581,19 @@ class TenantContract(models.Model):
     class Meta:
         managed = False
         db_table = 'tenant_contract'
+
+
+class TenantLease(models.Model):
+    tenant = models.ForeignKey(Tenant, models.DO_NOTHING)
+    landlord = models.ForeignKey(User, models.DO_NOTHING)
+    lease_address = models.CharField(max_length=255)
+    tenant_address = models.CharField(max_length=255)
+    tenant_signature = models.ImageField(null=True, blank=True, upload_to=sign_upload)
+    ctc_number = models.IntegerField()
+    date_signed = models.CharField(max_length=255)
+    day_signed = models.CharField(max_length=255)
+    year_signed = models.CharField(max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'tenant_lease'

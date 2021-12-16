@@ -178,6 +178,7 @@ ADMIN_REORDER = (
      'models': (
          {'model': 'myResidence.TenantContract', 'label': 'Tenant Contract'},
          {'model': 'myResidence.AttritionPrediction', 'label': 'Tenants Attrition Score'},
+         {'model': 'myResidence.TenantLease', 'label': 'Tenant Lease Agreement'},
      )
      },
     {'app': 'myResidence', 'label': 'Account Management',
@@ -244,6 +245,7 @@ JAZZMIN_SETTINGS = {
         "myResidence.billingtype": "fas fa-edit",
         "myResidence.billing": "fas fa-archive",
         "myResidence.proofofpayment": "fas fa-print",
+        "myResidence.tenantlease": "fas fa-file-signature",
         "myResidence.accountcustomization": "fas fa-object-group",
         "myResidence.admin": "fas fa-coffee",
         "myResidence.tenant": "fas fa-users",

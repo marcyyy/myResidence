@@ -210,6 +210,14 @@
                     </li>
             </ul>
 
+
+        {% for each in lease %}
+             <div class="p-1" style="justify-content: center;display: flex">
+                <a href="{% url 'contract_ud' %}" style="text-decoration: none">
+                        <button type="button" class="btn btn-sm btn-outline-secondary">View Lease Contract</button>
+                </a>
+             </div>
+        {% endfor %}
     </div>
 
   </div>
@@ -304,6 +312,8 @@
                                             <img src="{% static '/icons/login.png'%}" height="32px">
                                         {% elif log.activity == 'Access' and log.action == 'Logged Out'%}
                                             <img src="{% static '/icons/logout.png'%}" height="32px">
+                                        {% elif log.activity == 'Contract'%}
+                                            <img src="{% static '/icons/billings_b.png'%}" height="32px">
                                         {% endif %}
                                     </div>
 
@@ -366,6 +376,8 @@
                                             <img src="{% static '/icons/login.png'%}" height="32px">
                                         {% elif log.activity == 'Access' and log.action == 'Logged Out'%}
                                             <img src="{% static '/icons/logout.png'%}" height="32px">
+                                        {% elif log.activity == 'Contract'%}
+                                            <img src="{% static '/icons/billings_b.png'%}" height="32px">
                                         {% endif %}
                                     </div>
 

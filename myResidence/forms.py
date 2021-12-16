@@ -109,6 +109,12 @@ class ProofForm(forms.ModelForm):
         exclude = ("date_submitted","status","isActive")
 
 
+class LeaseForm(forms.ModelForm):
+    class Meta:
+        model = TenantLease
+        fields = '__all__'
+
+
 class ContractForm(forms.ModelForm):
     class Meta:
         model = TenantContract
