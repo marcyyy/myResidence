@@ -96,6 +96,8 @@ class AdminLogsForm(forms.ModelForm):
 
 
 class BillingForm(forms.ModelForm):
+    billing_type = forms.ModelChoiceField(queryset=BillingType.objects.filter(isactive='True'))
+
     class Meta:
         model = Billing
         fields = '__all__'

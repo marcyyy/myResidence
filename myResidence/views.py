@@ -6,6 +6,8 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+
+from .decorators import unauthenticated_user
 from .forms import *
 from django.urls import reverse
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
@@ -93,9 +95,9 @@ def register(request):
     return render(request, 'tenant/tenant_register.html', context)
 
 
+# @unauthenticated_user
 def loginpage(request):
     # ---------------------------------- init functions ---------------------------------- #
-
     # tenant number add
     for each in TenantUnit.objects.all():
         tuctr = Tenant.objects.filter(unit__id=each.id).count()
@@ -142,7 +144,8 @@ def loginpage(request):
                                             billing_type__billing_code="RB", tenant__id=each_t.id)
         # monthly rentbills
         if updaterent:
-            if Billing.objects.filter(date_issued__gte=last_month_filter, billing_type__billing_code="RB", tenant__id=each_t.id):
+            if Billing.objects.filter(date_issued__gte=last_month_filter, billing_type__billing_code="RB",
+                                      tenant__id=each_t.id):
                 pass
             else:
                 tenant = each_t.id
@@ -166,7 +169,7 @@ def loginpage(request):
         # else:
         #    contract = TenantContract.objects.filter(tenant__id=each_t.id)
         #
-            # must have contract first
+        # must have contract first
         #    if contract:
         #        createrent = Billing.objects.filter(billing_type__billing_code="RB", tenant__id=each_t.id)
         #        tc = TenantContract.objects.get(tenant__id=each_t.id)
@@ -246,14 +249,15 @@ def loginadmin(request):
                 return redirect('admin:index')
             else:
                 messages.error(request, 'Only Staffs can access the Tenant Management System.')
-                return redirect('login_admin')
+                return redirect('login_landlord')
         elif TenantRegistration.objects.filter(username=username).exists() and TenantRegistration.objects.filter(
                 password=password).exists():
             try:
                 messages.warning(request, 'Only Staffs can access the Tenant Management System.')
             except TenantRegistration.DoesNotExist:
                 messages.warning(request, 'Account does not exists.')
-        elif Tenant.objects.filter(account__username=username).exists() and Tenant.objects.filter(account__password=password).exists():
+        elif Tenant.objects.filter(account__username=username).exists() and Tenant.objects.filter(
+                account__password=password).exists():
             try:
                 messages.warning(request, 'This is login for Staff only.')
             except Tenant.DoesNotExist:
@@ -297,52 +301,54 @@ def admin_change(request):
     return render(request, 'admin/myResidence/admin/', context)
 
 
-# login_required(login_url='login')
-# allowed_users(allowed_roles=['tenant'])
 def home(request):
-    tid = request.user.tenant.id
-    if TenantAnnouncement.objects.all():
-        announcement = TenantAnnouncement.objects.get(pk=1)
-        news = AnnouncementNew.objects.order_by('-datepublished')
-    else:
-        announcement = 0
-        news = 0
-    notif = LogAdmin.objects.filter(tenant__id=tid, isactive='True')
-    contract = TenantContract.objects.filter(tenant__id=tid, confirmation='None')
+    try:
+        tid = request.user.tenant.id
+        if TenantAnnouncement.objects.all():
+            announcement = TenantAnnouncement.objects.get(pk=1)
+            news = AnnouncementNew.objects.order_by('-datepublished')
+        else:
+            announcement = 0
+            news = 0
+        notif = LogAdmin.objects.filter(tenant__id=tid, isactive='True')
+        contract = TenantContract.objects.filter(tenant__id=tid, confirmation='None')
 
-    if notif:
-        notifbilling = LogAdmin.objects.filter(tenant__id=tid, isactive='True', activity='Billing')
-        notifpop = LogAdmin.objects.filter(tenant__id=tid, isactive='True', activity='Proof of Payment')
-        notifvisitor = LogAdmin.objects.filter(tenant__id=tid, isactive='True', activity='Visitor')
-        notifreport = LogAdmin.objects.filter(tenant__id=tid, isactive='True', activity='Report')
-        notifrepair = LogAdmin.objects.filter(tenant__id=tid, isactive='True', activity='Repair')
-        notiflast = notif = LogAdmin.objects.filter(tenant__id=tid, isactive='True').latest('date_time')
-    else:
-        notifbilling = ""
-        notifpop = ""
-        notifvisitor = ""
-        notifreport = ""
-        notifrepair = ""
-        notiflast = ""
+        if notif:
+            notifbilling = LogAdmin.objects.filter(tenant__id=tid, isactive='True', activity='Billing')
+            notifpop = LogAdmin.objects.filter(tenant__id=tid, isactive='True', activity='Proof of Payment')
+            notifvisitor = LogAdmin.objects.filter(tenant__id=tid, isactive='True', activity='Visitor')
+            notifreport = LogAdmin.objects.filter(tenant__id=tid, isactive='True', activity='Report')
+            notifrepair = LogAdmin.objects.filter(tenant__id=tid, isactive='True', activity='Repair')
+            notiflast = notif = LogAdmin.objects.filter(tenant__id=tid, isactive='True').latest('date_time')
+        else:
+            notifbilling = ""
+            notifpop = ""
+            notifvisitor = ""
+            notifreport = ""
+            notifrepair = ""
+            notiflast = ""
 
-    if request.method == 'POST':
-        if request.POST.get("form_type") == 'con_notify':
-            tenantid = request.POST.get('id')
-            LogAdmin.objects.filter(tenant=tenantid, isactive='True').update(isactive='', )
-            return redirect('home')
-        elif request.POST.get("form_type") == 'con_contract' and request.POST.get("confirmation") == 'Yes':
-            # tenantid = request.POST.get('id')
-            # confirmation = request.POST.get('confirmation')
-            # TenantContract.objects.filter(tenant=tenantid).update(confirmation=confirmation, )
-            return redirect('contract')
-        elif request.POST.get("form_type") == 'con_contract' and request.POST.get("confirmation") == 'No':
-            messages.warning(request, "Please visit our office with regards to your contract ")
-            return redirect('home')
+        if request.method == 'POST':
+            if request.POST.get("form_type") == 'con_notify':
+                tenantid = request.POST.get('id')
+                LogAdmin.objects.filter(tenant=tenantid, isactive='True').update(isactive='', )
+                return redirect('home')
+            elif request.POST.get("form_type") == 'con_contract' and request.POST.get("confirmation") == 'Yes':
+                # tenantid = request.POST.get('id')
+                # confirmation = request.POST.get('confirmation')
+                # TenantContract.objects.filter(tenant=tenantid).update(confirmation=confirmation, )
+                return redirect('contract')
+            elif request.POST.get("form_type") == 'con_contract' and request.POST.get("confirmation") == 'No':
+                messages.warning(request, "Please visit our office with regards to your contract ")
+                return redirect('home')
 
-    context = {'announcement': announcement, 'news': news, 'notif': notif, 'notiflast': notiflast, 'contract':contract,
-               'notifbilling': notifbilling, 'notifpop': notifpop, 'notifvisitor': notifvisitor, 'notifreport': notifreport, 'notifrepair': notifrepair,
-               }
-    return render(request, 'tenant/tenant_home.html', context)
+        context = {'announcement': announcement, 'news': news, 'notif': notif, 'notiflast': notiflast, 'contract': contract,
+                   'notifbilling': notifbilling, 'notifpop': notifpop, 'notifvisitor': notifvisitor,
+                   'notifreport': notifreport, 'notifrepair': notifrepair,
+                   }
+        return render(request, 'tenant/tenant_home.html', context)
+    except Tenant.DoesNotExist:
+        return redirect('login')
 
 
 def contract(request):
@@ -382,14 +388,14 @@ def contract(request):
                 messages.error(request, 'Contract Sign failed.')
                 return redirect('contract')
 
-    context = {'month':todate.strftime("%B"), 'todate':todate, 'year':todate.strftime("%y"), 'landlord':landlord}
+    context = {'month': todate.strftime("%B"), 'todate': todate, 'year': todate.strftime("%y"), 'landlord': landlord}
     return render(request, 'tenant/tenant_contract.html', context)
 
 
 def contract_ud(request):
     contract_lease = TenantLease.objects.filter(tenant=request.user.tenant)
 
-    context = {'lease':contract_lease}
+    context = {'lease': contract_lease}
     return render(request, 'tenant/tenant_contract_ud.html', context)
 
 
@@ -455,7 +461,8 @@ def profile(request):
     lease = TenantLease.objects.filter(tenant_id=tid)
 
     datejoin = request.user.date_joined.date()
-    context = {'datejoin': datejoin, 'roomies': roomies, 'logs': logs, 'logs2': logs2, 'recount': recount, 'lease':lease}
+    context = {'datejoin': datejoin, 'roomies': roomies, 'logs': logs, 'logs2': logs2, 'recount': recount,
+               'lease': lease}
     return render(request, 'tenant/tenant_profile.html', context)
 
 
@@ -1051,7 +1058,7 @@ def attrition(request):
     hightot = AttritionPrediction.objects.filter(attrition_probability__gte=60).count()
 
     # form
-    tenants = Tenant.objects.all().order_by('unit__floor','unit__room')
+    tenants = Tenant.objects.all().order_by('unit__floor', 'unit__room')
     tenants_attr = AttritionPrediction.objects.filter(attrition_probability__gte=60).order_by('-attrition_probability')
     contract = TenantContract.objects.all()
     attrit = AttritionPrediction.objects.all()
@@ -1077,8 +1084,10 @@ def attrition(request):
             m = relativedelta(date_time, mdate)
             # latecoll = float(rent) * 0.05
 
-            data = {'move_date': mdate, 'tenant': tenant, 'rent': rent, 'late_collection': late_collection, 'grace_period': grace_period,
-                    'legal_rent': legal_rent, 'deposit': deposit, 'months_occupied': m.months + (12*m.years), 'roommates': roommates, 'epay': epay,
+            data = {'move_date': mdate, 'tenant': tenant, 'rent': rent, 'late_collection': late_collection,
+                    'grace_period': grace_period,
+                    'legal_rent': legal_rent, 'deposit': deposit, 'months_occupied': m.months + (12 * m.years),
+                    'roommates': roommates, 'epay': epay,
                     'confirmation': 'None'}
             form = ContractForm(data)
 
@@ -1094,7 +1103,7 @@ def attrition(request):
                 messages.error(request, 'Tenant Contract create failed.')
                 return redirect('attrition')
 
-    # UPDATE CONTRACT
+        # UPDATE CONTRACT
         elif request.POST.get("form_type") == 'updatecontract':
             tcid = request.POST.get('id')
             tenant = request.POST.get('tenant')
@@ -1114,13 +1123,13 @@ def attrition(request):
             TenantContract.objects.filter(id=tcid).update(
                 tenant=tenant, rent=rent, late_collection=late_collection,
                 grace_period=grace_period, legal_rent=legal_rent, deposit=deposit,
-                roommates=roommates, epay=epay, months_occupied= m.months + (12*m.years),
+                roommates=roommates, epay=epay, months_occupied=m.months + (12 * m.years),
             )
 
             messages.success(request, 'Tenant Contract update successful.')
             return redirect('attrition')
 
-    # CREATE CHURN
+        # CREATE CHURN
         elif request.POST.get("form_type") == 'churnprediction':
             tenant = request.POST.get('churn_tenant')
             contract = TenantContract.objects.get(tenant=tenant)
@@ -1167,7 +1176,7 @@ def attrition(request):
                 messages.error(request, "Attrition Prediction Failed.")
                 return redirect('attrition')
 
-    # UPDATE CHURN
+        # UPDATE CHURN
         elif request.POST.get("form_type") == 'updatechurnprediction':
             cid = request.POST.get('churn_id')
             tenant = request.POST.get('churn_tenant')
@@ -1202,10 +1211,10 @@ def attrition(request):
             ct_overdues = Billing.objects.filter(tenant=tenant, status='Overdue').count()
             ct_name = contract.tenant.account.first_name + " " + contract.tenant.account.last_name
             ct_score = fattr
-            AttritionPrediction.objects.filter(id=cid).update(datetime=date_time, attrition_probability=fattr,)
+            AttritionPrediction.objects.filter(id=cid).update(datetime=date_time, attrition_probability=fattr, )
             messages.info(request, "Attrition Prediction Update Success.", extra_tags='one_attrition')
 
-    # CHURN ALL
+        # CHURN ALL
         elif request.POST.get("form_type") == 'confirm':
             tenantlist = TenantContract.objects.all()
 
@@ -1240,7 +1249,8 @@ def attrition(request):
 
                 if cid:
                     attrid = AttritionPrediction.objects.get(tenant=tenant)
-                    AttritionPrediction.objects.filter(id=attrid.id).update(datetime=date_time, attrition_probability=fattr, )
+                    AttritionPrediction.objects.filter(id=attrid.id).update(datetime=date_time,
+                                                                            attrition_probability=fattr, )
                 else:
                     data = {'tenant': tenant, 'attrition_probability': fattr, 'is_active': 'True', }
                     form = AttritionForm(data)
@@ -1252,11 +1262,12 @@ def attrition(request):
                     else:
                         return redirect('attrition')
 
-
             messages.info(request, 'Attrition of all tenants successfully processed.', extra_tags='all_attrition')
             return redirect('attrition')
 
-    context = {'tenants': tenants, 'tenants_attr':tenants_attr, 'contract': contract, 'attrit': attrit, 'form': form, 'nocont_tot':nocont_tot,
-               'tenantctr': tenantctr, 'noattrit_tot': noattrit_tot, 'updatetot': updatetot, 'scoreavg': scoreavg,  'hightot': hightot,
-               'ct_report': ct_report, 'ct_overdues': ct_overdues, 'ct_name': ct_name, 'ct_score': ct_score,}
+    context = {'tenants': tenants, 'tenants_attr': tenants_attr, 'contract': contract, 'attrit': attrit, 'form': form,
+               'nocont_tot': nocont_tot,
+               'tenantctr': tenantctr, 'noattrit_tot': noattrit_tot, 'updatetot': updatetot, 'scoreavg': scoreavg,
+               'hightot': hightot,
+               'ct_report': ct_report, 'ct_overdues': ct_overdues, 'ct_name': ct_name, 'ct_score': ct_score, }
     return render(request, 'analytics/attrition.html', context)

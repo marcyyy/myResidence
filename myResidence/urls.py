@@ -30,7 +30,6 @@ urlpatterns = [
     path('analytics/report', views.report, name='report'),
     path('analytics/attrition', views.attrition, name='attrition'),
     path('landlord/login/', views.loginadmin, name='login_landlord'),
-    path('admin/login/', admin_login.urls, name='login_admin'),
 
 ]
 

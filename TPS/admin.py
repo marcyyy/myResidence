@@ -1128,14 +1128,13 @@ class LeaseList(ExportActionMixin, admin.ModelAdmin):
         return obj.date_signed
 
     def lease_agreement(self, obj):
-        url_contract = 'tenant/tenant_contract_ud.html'
-        return format_html('<a href="{}">View Lease Contract<a/>'.format(url_contract))
+        return format_html('<a href="{}">View (Work in Progress)<a/>'.format(''))
 
     get_name.short_description = 'Tenant Name'
     get_unit.short_description = 'Tenant Unit'
     get_ctc.short_description = 'CTC Number'
     get_date.short_description = 'Date Signed'
-    lease_agreement.short_description = 'View Lease Contract'
+    lease_agreement.short_description = 'Lease Contract'
 
 
 # ADMIN TABLE REGISTER

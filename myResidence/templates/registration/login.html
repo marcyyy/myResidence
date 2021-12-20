@@ -23,19 +23,24 @@
 
   <body class="text-center" style="background-image: linear-gradient(145deg, #41b766 , #a0b248); background-size: 35%; background-repeat: no-repeat;">
 
-    {% if form.errors %}
-    <div class='alert alert-primary alert-dismissible'>
-    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
-       There seems to be an error. Please try again.
-    </div>
-    {% endif %}
-
     {% for message in messages %}
-    <div class='alert alert-primary alert-dismissible'>
-    <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
-        {{message}}
-    </div>
-    {% endfor %}
+            {% if message.tags == 'success' %}
+        <div class='alert alert-success alert-dismissible'>
+        <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+            {{message}}
+        </div>
+            {% elif message.tags == 'error' %}
+        <div class='alert alert-danger alert-dismissible'>
+        <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+            {{message}}
+        </div>
+            {% elif message.tags == 'warning' %}
+        <div class='alert alert-warning alert-dismissible'>
+        <a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>
+            {{message}}
+        </div>
+            {% endif %}
+        {% endfor %}
 
       <div class="container rounded-3 " style="box-shadow: 0 7px 50px 0 rgba(0, 0, 0, 0.29)">
 
